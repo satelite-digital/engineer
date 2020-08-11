@@ -1,5 +1,21 @@
-import greet from "./core/greet"
+const { transmute } = require('./index')
 
-module.exports = {
-	greet
+const main = async(path = `${process.cwd()}/satelite.engineer.json`)=>{
+
+  const options = require(path)
+  // Execute transmute
+  for(path in options){
+    let res = await transmute(options[path]);
+  }
 }
+
+main()
+.then(results =>{
+  console.log(results)
+})
+.catch(err =>{
+  throw new Error(err)
+})
+.finally(()=>{
+  console.log('done')
+})

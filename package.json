@@ -1,22 +1,24 @@
 {
-  "name": "@ericksatelite/library-template",
+  "name": "@ericksatelite/transmute",
   "version": "0.0.1",
-  "main": "dist/lib.cjs.js",
-  "module": "dist/lib.esm.js",
-  "browser": "dist/lib.umd.js",
-  "dependencies": {},
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^11.0.1",
-    "@rollup/plugin-node-resolve": "^7.0.0",
-    "rollup": "^1.29.0"
-  },
+  "description": "Model based, tecnology agnostic, code-first, automated file scaffolding tool",
+  "main": "index.js",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "test": "node test",
-    "pretest": "npm run build"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node src/main"
   },
-  "files": [
-    "dist"
-  ]
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satelite-digital/transmute.git"
+  },
+  "author": "Erick Ruano",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/satelite-digital/transmute/issues"
+  },
+  "homepage": "https://github.com/satelite-digital/transmute#readme",
+  "devDependencies": {
+    "fs-jetpack": "^2.4.0",
+    "handlebars": "^4.7.6"
+  }
 }

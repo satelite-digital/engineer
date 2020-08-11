@@ -1,0 +1,18 @@
+[
+  {
+    "path" : "./test/william/template/[#]schema.prisma",
+    "model" : "./test/william/transmute.json",
+    "dest" : "./node_modules/@transmute/api-client",
+    "modifiers" :  [
+      "./test-modifier.js"
+    ]
+  },
+  {
+    "path" : "./test/william/template/[#]schema.js",
+    "model" : "./test/william/transmute.json",
+    "dest" : "./test/william/dist/",
+    "modifiers" :  [
+      "./test-modifier.js"
+    ]
+  }
+]
