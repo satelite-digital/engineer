@@ -1,0 +1,22 @@
+{
+  "name": "@ericksatelite/library-template",
+  "version": "0.0.1",
+  "main": "dist/lib.cjs.js",
+  "module": "dist/lib.esm.js",
+  "browser": "dist/lib.umd.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^11.0.1",
+    "@rollup/plugin-node-resolve": "^7.0.0",
+    "rollup": "^1.29.0"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "node test",
+    "pretest": "npm run build"
+  },
+  "files": [
+    "dist"
+  ]
+}
