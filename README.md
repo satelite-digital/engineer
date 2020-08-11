@@ -1,29 +1,9 @@
-# library-template
+# transmute
+Model based, tecnology agnostic, code-first, automated file scaffolding tool
+
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/satelite-digital/library-template/graphs/commit-activity)
 
-[![GitHub stars](https://img.shields.io/github/stars/Naereen/StrapDown.js.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/satelite-digital/library-template/stargazers/)
-
-[![GitHub watchers](https://img.shields.io/github/watchers/Naereen/StrapDown.js.svg?style=social&label=Watch&maxAge=2592000)](https://GitHub.com/satelite-digital/library-temlpate/watchers/)
-
-
-Este repositorio contiene una plantilla para librerías.  Implementa Rollup para generar la distribución.
-
-Actualmente contiene una función de ejemplo:
-
-```js
-console.log(lib.greet());
-
-// Results
-Hello World!
-```
-
-```js
-console.log(lib.greet("Erick"));
-
-// Results
-Hello Erick!
-```
 
 
 ## Getting started
