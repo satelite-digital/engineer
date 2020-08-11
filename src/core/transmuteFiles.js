@@ -5,10 +5,8 @@ let transmuteFiles = async(files, model, dest)=>{
 
   let err = false;
   for(file in files){
-    // let _path = path+"/"+files[file].name+"_";
     
-    // throw "hola"
-    console.log( await transmuteFile(files[file], model, dest));
+    await transmuteFile(files[file], model, dest);
   }
   if(!err){
     return 'success';

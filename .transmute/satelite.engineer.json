@@ -6,24 +6,29 @@
     "./test-modifier.js"
   ],
   "resources" : [
-
     {
-      "path" : "./test/william/template/controller.js",
-      "key" : "schema",
-      "dest" : "./test/william/dist/[_id]/[_id]Controller.js"
+      "path" : "./test/william/template/package.json",
+      "dest" : "./test/william/dist/package.json"
     },
     {
       "path" : "./test/william/template/controller.js",
-      "key" : "schema",
-      "dest" : "./test/william/dist/[_id].js"
+      "key" : "model",
+      "dest" : "./test/william/dist/[id]/[name]Controller.js"
+    },
+    {
+      "path" : "./test/william/template/controller.js",
+      "key" : "model",
+      "dest" : "./test/william/dist/[id].js"
     },
     {
       "path" : "./test/william/template/schema.prisma",
+      "key" : "model",
       "dest" : "./test/william/dist/schema.prisma"
     },
     {
       "path" : "./test/william/template/schema.js",
-      "dest" : "./test/william/dist/schema.js",
+      "key" : "model", 
+      "dest" : "./test/william/dist/",
       "modifier" : [
         "./ai-generate-model.js"
       ]

@@ -2,16 +2,16 @@ const { transmute } = require('./index')
 
 const main = async(path = `${process.cwd()}/satelite.engineer.json`)=>{
 
-  const options = require(path)
+  const config = require(path)
   // Execute transmute
-  for(path in options){
-    let res = await transmute(options[path]);
-  }
+  config.resources.forEach(async resource =>{
+    await transmute(resource, config.options, config.modifiers);
+  })
 }
 
 main()
 .then(results =>{
-  console.log(results)
+  // console.log(results)
 })
 .catch(err =>{
   throw new Error(err)
