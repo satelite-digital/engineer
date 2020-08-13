@@ -7,12 +7,10 @@ Data oriented and language agnostic automated code generation tool
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+- [NodeJS](https://nodejs.org/en/download/)
+- [NPM](https://www.npmjs.com/get-npm)
+- [GIT](https://git-scm.com/downloads)
 
-```
-git
-npm
-```
 
 ### Installing
 
@@ -39,7 +37,6 @@ This will create a *satelite.engineer.config.js* file that includes a minimal wo
 │       └── code.js
 
 ```
-
 
 ## Configuration
 
@@ -95,8 +92,8 @@ For example:
 ...,
 "resources" : [
     {
-      "src" : "./engineer",
-      "dest" : "./node_modules/@satelite/forms/src"
+      "src" : "./engineer/files",
+      "dest" : "./src/"
     },
     {
       "src" : "./node_modules/@satelite/client/template",
@@ -113,9 +110,9 @@ For example:
 ]
 ```
 
-### Manual configuration
+### Automatic configuration
 
-
+pending documentation
 
 
 ## Building and maintaining
@@ -126,8 +123,6 @@ For example:
     A CommonJS bundle, suitable for use in Node.js, that `require`s the external dependency. This corresponds to the `"main"` field in package.json
 * `dist/lib.esm.js`
     an ES module bundle, suitable for use in other people's libraries and applications, that `import`s the external dependency. This corresponds to the `"module"` field in package.json
-* `dist/lib.umd.js`
-    a UMD build, suitable for use in any environment (including the browser, as a `<script>` tag), that includes the external dependency. This corresponds to the `"browser"` field in package.json
 
 `npm run dev` builds the library, then keeps rebuilding it whenever the source files change using [rollup-watch](https://github.com/rollup/rollup-watch).
 
@@ -135,22 +130,10 @@ For example:
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+Pending documentation
 
 ```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
+npm run test
 ```
 
 ## Deployment
@@ -159,13 +142,11 @@ Add additional notes about how to deploy this on a live system
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [Glob](https://github.com/isaacs/node-glob#readme) - Used for file fetching
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](https://github.com/satelite-digital/engineer/contributing.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ### To do
 
@@ -177,15 +158,13 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+This software is being peer programmed by:
+
+* **Erick Ruano** - *Initial work* - [Erick](https://github.com/ErickRuano)
+* **William Chanchavac** - *Initial work* - [William]https://github.com/WilliamChanchavac)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
 
 ## License
 
