@@ -57,7 +57,7 @@ Next you can add files that are going to be parsed by Engineer to generate the c
 
 ### Manual configuration
 
-A resource is any file which implements Handlebars.js directives that match a section or your complete data input model to generate the finished code
+A resource is any file which implements a templating engine directives that match a section or your complete data input model to generate the finished code
 
 You can add a resources Key to your configuration object which must be an array containing objects with the following schema:
 
@@ -143,13 +143,13 @@ Add additional notes about how to deploy this on a live system
 
 ## Built With
 
-* [Hanldebars](https://github.com/isaacs/node-glob#readme) - Used as template engine
-* [Jetpack](https://github.com/isaacs/node-glob#readme) - Used for working with file system
+* [Hanldebars](https://handlebarsjs.com/) - Used as template engine
+* [Jetpack](https://github.com/szwacz/fs-jetpack) - Used for working with file system
 * [Glob](https://github.com/isaacs/node-glob#readme) - Used for file fetching
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://github.com/satelite-digital/engineer/contributing.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](https://github.com/satelite-digital/engineer/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ### To do
 
