@@ -164,7 +164,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 This software is being peer programmed by:
 
 * **Erick Ruano** - *Initial work* - [Erick](https://github.com/ErickRuano)
-* **William Chanchavac** - *Initial work* - [William]https://github.com/WilliamChanchavac)
+* **William Chanchavac** - *Initial work* - [William](https://github.com/WilliamChanchavac)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
