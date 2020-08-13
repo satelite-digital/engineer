@@ -47,9 +47,10 @@ Open satelite.engineer.config.js and set path to your data input file
 ```
 {
 ...,
-"resources" : [
-    "src" : "./satelite-engineer/files/",
-]
+"options" : [
+    "data" : "./engineer/data.json"
+],
+...
 ```
 
 Next you can add files that are going to be parsed by Engineer to generate the code
@@ -112,7 +113,7 @@ For example:
 
 ### Automatic configuration
 
-pending documentation
+Pending documentation
 
 
 ## Building and maintaining
@@ -142,6 +143,8 @@ Add additional notes about how to deploy this on a live system
 
 ## Built With
 
+* [Hanldebars](https://github.com/isaacs/node-glob#readme) - Used as template engine
+* [Jetpack](https://github.com/isaacs/node-glob#readme) - Used for working with file system
 * [Glob](https://github.com/isaacs/node-glob#readme) - Used for file fetching
 
 ## Contributing
