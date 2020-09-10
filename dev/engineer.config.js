@@ -1,11 +1,11 @@
 const config = {
   "options" : {
-    "model" : "./dev/schema.json"
+    "model" : "./dev/.engineer/data.json"
   },
   "resources" : [
     {
-      "src" : "./dev/files/package.json",
-      "dest" : "./_hola/[app.name]hola"
+      "src" : "./dev/.engineer/files/code.js",
+      "dest" : "./dev/src/code.js"
     }
   ]
 }
