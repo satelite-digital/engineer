@@ -1,4 +1,3 @@
-const boxen = require('boxen');
 import parseFile from "./../utils/parseFile";
 import checkModelExists from "./../utils/checkModel";
 import parseOptions from "./../utils/parseOptions";
@@ -10,8 +9,6 @@ import transmuteFile from "./transmuteFile";
 // Transmute main
 const transmute = async(resource, options, modifiers)=>{
 
- console.log('heeeeeeeeey')
-  console.log(boxen('Engineer', {padding: 1, margin: 1, borderStyle: 'double'}, borderColor : "magenta"));
 
       
   resource = await parseFile(resource); 
