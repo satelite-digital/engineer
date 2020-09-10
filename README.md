@@ -14,7 +14,7 @@ Data oriented and language agnostic automated code generation tool
 
 ### Installing
 
-Install Satelite CLI and Satelite Engineer:
+Install Satelite CLI:
 
 ```bash
 npm i -g @ericksatelite/engineer-cli
