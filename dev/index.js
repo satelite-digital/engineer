@@ -1,3 +1,3 @@
 const engineer = require('./../dist/lib.cjs');
 
-engineer()
+engineer(`${process.cwd()}/dev/engineer.config.js`)

@@ -4,7 +4,7 @@
     "type": "git",
     "url": "git+https://github.com/satelite-digital/engineer.git"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "dist/lib.cjs.js",
   "module": "dist/lib.esm.js",
   "browser": "dist/lib.umd.js",
@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.1",
+    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^7.0.0",
     "rollup": "^1.29.0"
   },
