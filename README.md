@@ -20,7 +20,7 @@ Install Satelite CLI and Satelite Engineer:
 npm i -g @ericksatelite/engineer-cli
 ```
 
-(TO-DO) Initialize configuration file:
+Initialize configuration file:
 
 ```
 engineer init
