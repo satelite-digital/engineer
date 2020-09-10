@@ -1,6 +1,6 @@
 import { transmute } from './index'
 
-const main = async(path = `${process.cwd()}/dev/engineer.config.js`)=>{
+const main = async(path = `${process.cwd()}/engineer.config.js`)=>{
   const config = require(path)
   // Execute engineer for each resource
   config.resources.forEach(async resource =>{
