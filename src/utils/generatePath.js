@@ -17,5 +17,4 @@ let generatePath = (dest, model)=>{
 }
 
 
-module.exports = generatePath;
-
+export default generatePath;

@@ -1,5 +1,7 @@
-const transmute = require('./core/transmute')
+import transmuteScript from './core/transmute';
 
-module.exports = {
+export default {
 	transmute
-}
+};
+
+export const transmute = transmuteScript;

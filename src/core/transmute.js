@@ -1,17 +1,17 @@
-const findKey = require("./../utils/findKey");
-const checkModelExists = require("./../utils/checkModel");
-const parseFile = require("./../utils/parseFile");
-const parseOptions = require("./../utils/parseOptions");
-const fetchFile = require("./../utils/fetchFile");
-const fetchModel = require("./../utils/fetchModel");
-const transmuteFile = require("./transmuteFile");
+import checkModelExists from "./../utils/checkModel";
+import parseOptions from "./../utils/parseOptions";
+import fetchFile from "./../utils/fetchFile";
+import fetchModel from "./../utils/fetchModel";
+import transmuteFile from "./transmuteFile";
 
 
 // Transmute main
 const transmute = async(resource, options, modifiers)=>{
 
+      
+  // resource = await parseFile(resource); 
+  
       // parseOptions
-      resource = await parseFile(resource); // evaluar fetch file
       options = await parseOptions(options);
       // modifiers = await parseModifier(modifiers);
       
@@ -24,16 +24,12 @@ const transmute = async(resource, options, modifiers)=>{
         throw new Error("model not found")
       }
 
-
-console.log('validModel BEFORE ###########################', validModel)
 if(resource.hasOwnProperty('key')){
   validModel = validModel[resource.key]; // implementar lodash
-}
-console.log('validModel After ###########################', validModel)
-      
+}      
 
       // fetchFiles
-      const file = await fetchFile(resource.path, true); // file
+      const file = await fetchFile(resource.src, true); // file
       
 
       if(Array.isArray(validModel)){
@@ -50,4 +46,4 @@ console.log('validModel After ###########################', validModel)
   }
 
 
-module.exports = transmute;
+export default transmute;

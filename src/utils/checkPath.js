@@ -1,4 +1,4 @@
-let jetpack = require("fs-jetpack");
+import jetpack from "fs-jetpack";
 
 let checkPath = async (path, query)=>{
   console.log('checkpath', path, query)
@@ -9,4 +9,4 @@ let checkPath = async (path, query)=>{
   }
 }
 
-module.exports = checkPath;
+export default checkPath;

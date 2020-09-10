@@ -1,7 +1,7 @@
-let jetpack = require("fs-jetpack");
+import jetpack from "fs-jetpack";
 
 let fetchModel = async (model)=>{ 
   return JSON.parse(jetpack.read(model)); // revisar si usar require mejor
 }
 
-module.exports = fetchModel;
+export default fetchModel;

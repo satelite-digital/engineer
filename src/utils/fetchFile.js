@@ -1,4 +1,4 @@
-let jetpack = require("fs-jetpack");
+import jetpack from"fs-jetpack";
 
 
 // deberia ponerle path al file.
@@ -21,4 +21,4 @@ let fetchFile = async (path)=>{
   return files;
 }
 
-module.exports = fetchFile;
+export default fetchFile;

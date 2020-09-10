@@ -1,4 +1,4 @@
-let Handlebars = require('handlebars');
+import Handlebars from 'handlebars';
 
 Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
     // console.log((arg1 == arg2) ? options.fn(this) : options.inverse(this))
@@ -20,4 +20,4 @@ let transmuteContents = (contents, model)=>{
     
 }
 
-module.exports = transmuteContents;
+export default transmuteContents;

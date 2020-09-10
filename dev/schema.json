@@ -1,5 +1,9 @@
 {
-    "model" : [
+    "app" : {
+        "scope" : "@ericksatelite",
+        "name" : "test"
+    },
+    "schema" : [
         {
             "id" : "Task",
             "_id" : "task",

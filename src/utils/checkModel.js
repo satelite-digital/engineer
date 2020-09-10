@@ -1,4 +1,4 @@
-let checkPath = require("./checkPath");
+import checkPath from "./checkPath";
 
 // returns true if valid
 let checkModel = async (model)=>{
@@ -12,4 +12,4 @@ let checkModel = async (model)=>{
   }
 }
 
-module.exports = checkModel;
+export default checkModel;

@@ -1,10 +1,9 @@
-let jetpack = require('fs-jetpack');
-const generatePath = require("./../utils/generatePath");
+import jetpack from 'fs-jetpack';
+import generatePath from "./../utils/generatePath.js";
 
-const transmuteContents = require("./transmuteContents");
+import transmuteContents from "./transmuteContents.js";
 
 const transmuteFile = async (file, model, dest)=>{
-
 
   // Get file path
   dest = generatePath(dest, model);
@@ -17,4 +16,4 @@ const transmuteFile = async (file, model, dest)=>{
   
 }
 
-module.exports = transmuteFile;
+export default transmuteFile;

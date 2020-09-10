@@ -1,4 +1,4 @@
-let findKey = require("./findKey.js");
+import findKey from "./findKey.js";
 
 let parseOptions = async (options)=>{
 
@@ -11,4 +11,4 @@ let parseOptions = async (options)=>{
   return options
 };
 
-module.exports = parseOptions;
+export default parseOptions;

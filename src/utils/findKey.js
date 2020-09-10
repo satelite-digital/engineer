@@ -5,4 +5,4 @@ let findKey = (dest)=>{
 }
 
 
-module.exports = findKey;
+export default findKey;
