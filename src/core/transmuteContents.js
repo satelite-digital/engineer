@@ -7,7 +7,6 @@ Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
 
 let transmuteContents = (contents, model)=>{
 
-    console.log('transmuteContents', contents, model)
 
         try{
             let compiler = Handlebars.compile(contents);

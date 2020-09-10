@@ -4,13 +4,15 @@
     "type": "git",
     "url": "git+https://github.com/satelite-digital/engineer.git"
   },
-  "version": "1.0.5",
+  "version": "1.1.0",
   "main": "dist/lib.cjs.js",
   "module": "dist/lib.esm.js",
   "browser": "dist/lib.umd.js",
   "dependencies": {
+    "boxen": "^4.2.0",
     "fs-jetpack": "^3.1.0",
-    "handlebars": "^4.7.6"
+    "handlebars": "^4.7.6",
+    "ora": "^5.1.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.1",

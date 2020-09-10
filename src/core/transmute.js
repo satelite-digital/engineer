@@ -1,3 +1,5 @@
+const boxen = require('boxen');
+const ora = require('ora');
 import checkModelExists from "./../utils/checkModel";
 import parseOptions from "./../utils/parseOptions";
 import fetchFile from "./../utils/fetchFile";
@@ -8,7 +10,11 @@ import transmuteFile from "./transmuteFile";
 // Transmute main
 const transmute = async(resource, options, modifiers)=>{
 
-      
+  console.log(boxen('Engineer', {padding: 6, margin: 1, borderColor : "magenta" }));
+
+ 
+  const spinner = ora('Building project').start();
+
   // resource = await parseFile(resource); 
   
       // parseOptions
@@ -37,11 +43,13 @@ if(resource.hasOwnProperty('key')){
           await transmuteFile(file, item, resource.dest);
         })
       }else{
-        console.log('transmute with model!!!!!##########33!!!', validModel)
         await transmuteFile(file, validModel, resource.dest);
       }
 
-      return true;
+      setTimeout(()=>{
+        spinner.stop()
+        return true;
+      }, 3000);
       
   }
 
