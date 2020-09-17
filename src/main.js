@@ -9,7 +9,7 @@ const main = async(path = `${process.cwd()}/engineer.config.js`)=>{
   const config = require(path)
   // Execute engineer for each resource
   config.resources.forEach(async (resource, i) =>{
-    await transmute(resource, config.options, config.modifiers);
+    await transmute(resource, config);
     if(i == (config.resources.length - 1)){
       spinner.stop()
     }

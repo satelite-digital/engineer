@@ -1,46 +1,33 @@
-
-import checkModelExists from "./../utils/checkModel";
-import parseOptions from "./../utils/parseOptions";
 import fetchFile from "./../utils/fetchFile";
-import fetchModel from "./../utils/fetchModel";
 import transmuteFile from "./transmuteFile";
 
 
 // Transmute main
-const transmute = async(resource, options, modifiers)=>{
+const transmute = async(resource, config)=>{
 
-  
-  // resource = await parseFile(resource); 
-  
-      // parseOptions
-      options = await parseOptions(options);
-      // modifiers = await parseModifier(modifiers);
-      
-      // Check if model is valid and fetch
-      let validModel = await checkModelExists(options.model); //  refactor
-      
-      if(validModel){
-        validModel = await fetchModel(options.model);
+      let validModel = config.model; //  refactor
+      let scopedModel;
+      if(resource.hasOwnProperty('key')){
+        scopedModel = validModel[resource.key]; // implementar lodash
       }else{
-        throw new Error("model not found")
+        scopedModel = validModel;
       }
 
-if(resource.hasOwnProperty('key')){
-  validModel = validModel[resource.key]; // implementar lodash
-}      
-
-      // fetchFiles
-      const file = await fetchFile(resource.src, true); // file
-      
-
-      if(Array.isArray(validModel)){
-        validModel.forEach(async item =>{
-          await transmuteFile(file, item, resource.dest);
-        })
-      }else{
-        await transmuteFile(file, validModel, resource.dest);
+      if('if' in resource && typeof resource.if == 'function'){   
+        if(resource.if(scopedModel)){  
+          // fetchFiles
+          const file = await fetchFile(resource.src, true); // file
+            
+          if(Array.isArray(scopedModel)){
+            scopedModel.forEach(async item =>{
+              await transmuteFile(file, item, resource.dest);
+            })
+          }else{
+            await transmuteFile(file, scopedModel, resource.dest);
+          }
+          
+        }
       }
-
       
         
       return true;

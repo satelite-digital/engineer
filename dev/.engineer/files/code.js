@@ -1,4 +1,1 @@
-{{#each demo}}
-{{this}}
-{{/each}}
-
+Hello {{#each hello}}{{this}}{{/each}}!
