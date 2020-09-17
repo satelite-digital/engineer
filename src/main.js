@@ -6,7 +6,10 @@ const main = async(path = `${process.cwd()}/engineer.config.js`)=>{
   console.log('init main')
   console.log(boxen('Engineer', {padding: 6, margin: 1, borderColor : "magenta" }));
   const spinner = ora('Building project').start();
-  const config = require(path)
+  let config = require(path)
+  if('then' in config){
+    config = await config
+  }
   // Execute engineer for each resource
   config.resources.forEach(async (resource, i) =>{
     await transmute(resource, config);

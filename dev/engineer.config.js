@@ -1,35 +1,38 @@
+const helloWorldPlugin = require("./.engineer/plugins/helloWorld.plugin");
 
+const main = async ()=>{
 
-let config = {
-  "model" : {
-    ...require('./.engineer/data.json')
-  },
-  "options" : {
-   
-  },
-  "resources" : [
-    {
-      "src" : "./dev/.engineer/files/code.js",
-      "dest" : "./dev/src/code.js"
+  let config = {
+    "model" : require('./.engineer/data.json'),
+    "options" : {
     },
-    {
-      "src" : "./dev/.engineer/files/module.js",
-      "dest" : "./dev/src/[id]/[id].module.js",
-      "key" : "model",
-      "if" : (model)=>{
-        console.log('model.code:', model)
-        return model.code
+    "resources" : [
+      {
+        "src" : "./dev/.engineer/files/code.js",
+        "dest" : "./dev/src/code.js"
+      },
+      {
+        "src" : "./dev/.engineer/files/module.js",
+        "dest" : "./dev/src/[id]/[id].module.js",
+        "key" : "model",
+        "if" : (model)=>{
+          return model.code
+        }
+      },
+      {
+        "src" : "./dev/.engineer/files/other.js",
+        "dest" : "./dev/src/[id]/[id].other.js",
+        "key" : "model",
+        "if" : (model)=>{
+          return model.other
+        }
       }
-    },
-    {
-      "src" : "./dev/.engineer/files/other.js",
-      "dest" : "./dev/src/[id]/[id].other.js",
-      "key" : "model",
-      "if" : (model)=>{
-        return model.other
-      }
-    }
-  ]
+    ]
+  }
+
+  config = await helloWorldPlugin(config)
+  return config
+
 }
 
-module.exports = config
+module.exports = main()
