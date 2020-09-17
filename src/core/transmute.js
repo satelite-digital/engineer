@@ -13,21 +13,33 @@ const transmute = async(resource, config)=>{
         scopedModel = validModel;
       }
 
-      if('if' in resource && typeof resource.if == 'function'){   
-        if(resource.if(scopedModel)){  
+     
           // fetchFiles
           const file = await fetchFile(resource.src, true); // file
             
           if(Array.isArray(scopedModel)){
+            
             scopedModel.forEach(async item =>{
-              await transmuteFile(file, item, resource.dest);
+              let createIf = true
+              if('if' in resource && typeof resource.if == 'function'){
+                createIf = resource.if(item)
+              }
+              if(createIf){  
+                await transmuteFile(file, item, resource.dest);
+              }
             })
           }else{
-            await transmuteFile(file, scopedModel, resource.dest);
+            let createIf = true
+              if('if' in resource && typeof resource.if == 'function'){
+                createIf = resource.if(scopedModel)
+              }
+              if(createIf){  
+                await transmuteFile(file, scopedModel, resource.dest);
+              }
+            
           }
           
-        }
-      }
+        
       
         
       return true;

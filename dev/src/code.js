@@ -1,1 +1,4 @@
-Hello mars!
+- [object Object]
+- [object Object]
+- [object Object]
+

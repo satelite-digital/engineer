@@ -1,12 +1,8 @@
-const plugin = (config)=>{
-  config.model.hello = "mars".split("")
-  return config;
-}
+
 
 let config = {
   "model" : {
-    "create" : true,
-    "hello" : "world".split("")
+    ...require('./.engineer/data.json')
   },
   "options" : {
    
@@ -14,13 +10,26 @@ let config = {
   "resources" : [
     {
       "src" : "./dev/.engineer/files/code.js",
-      "dest" : "./dev/src/code.js",
+      "dest" : "./dev/src/code.js"
+    },
+    {
+      "src" : "./dev/.engineer/files/module.js",
+      "dest" : "./dev/src/[id]/[id].module.js",
+      "key" : "model",
       "if" : (model)=>{
-        return model.create
+        console.log('model.code:', model)
+        return model.code
+      }
+    },
+    {
+      "src" : "./dev/.engineer/files/other.js",
+      "dest" : "./dev/src/[id]/[id].other.js",
+      "key" : "model",
+      "if" : (model)=>{
+        return model.other
       }
     }
   ]
 }
 
-config = plugin(config)
 module.exports = config

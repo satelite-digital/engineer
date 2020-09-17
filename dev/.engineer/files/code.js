@@ -1,1 +1,4 @@
-Hello {{#each hello}}{{this}}{{/each}}!
+{{#each model}}
+- {{this}}
+{{/each}}
+
