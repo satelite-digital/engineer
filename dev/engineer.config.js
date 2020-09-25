@@ -1,38 +1,13 @@
-const helloWorldPlugin = require("./.engineer/plugins/helloWorld.plugin");
-
-const main = async ()=>{
-
-  let config = {
-    "model" : require('./.engineer/data.json'),
-    "options" : {
-    },
-    "resources" : [
-      {
-        "src" : "./dev/.engineer/files/code.js",
-        "dest" : "./dev/src/code.js"
-      },
-      {
-        "src" : "./dev/.engineer/files/module.js",
-        "dest" : "./dev/src/[id]/[id].module.js",
-        "key" : "model",
-        "if" : (model)=>{
-          return model.code
-        }
-      },
-      {
-        "src" : "./dev/.engineer/files/other.js",
-        "dest" : "./dev/src/[id]/[id].other.js",
-        "key" : "model",
-        "if" : (model)=>{
-          return model.other
-        }
-      }
-    ]
-  }
-
-  config = await helloWorldPlugin(config)
-  return config
-
+const config = {
+  model : {
+    hello : "world"
+  },
+  resources : [
+    {
+      src : "./dev/files/hello.world.js",
+      dest : "./dev/dist/hello.world.js"
+    }
+  ]
 }
 
-module.exports = main()
+module.exports = config

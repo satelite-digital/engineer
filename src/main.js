@@ -1,11 +1,12 @@
 import { transmute } from './index'
-const boxen = require('boxen');
-const ora = require('ora');
+const boxen = require('boxen')
+const ora = require('ora')
 
 const main = async(path = `${process.cwd()}/engineer.config.js`)=>{
   console.log('init main')
-  console.log(boxen('Engineer', {padding: 6, margin: 1, borderColor : "magenta" }));
-  const spinner = ora('Building project').start();
+  console.log(boxen('Engineer', {padding: 6, margin: 1, borderColor : "magenta" }))
+  const spinner = ora('Building project').start()
+  const before = new Date()
   let config = require(path)
   if('then' in config){
     config = await config
@@ -15,6 +16,8 @@ const main = async(path = `${process.cwd()}/engineer.config.js`)=>{
     await transmute(resource, config);
     if(i == (config.resources.length - 1)){
       spinner.stop()
+      const after = new Date()
+      console.log(`Build took ${after - before}ms`)
     }
   })
 }
