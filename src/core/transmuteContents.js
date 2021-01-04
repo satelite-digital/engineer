@@ -13,8 +13,9 @@ let transmuteContents = (contents, model)=>{
             let res = compiler(model);
             return(res);
         }catch(err){
-            console.log('modelo que falla!!!', model)
+            // console.log('modelo que falla!!!', model)
             throw new Error(err)
+            // console.log('fail:  ',contents)
         }
     
 }

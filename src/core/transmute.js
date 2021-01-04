@@ -35,11 +35,12 @@ const transmute = async(resource, config)=>{
                   createIf = resource.if(item)
                 }
               if(createIf){  
-                createdFiles.push(await transmuteFile(file, item, resource.dest));
-                // console.log('transmuted---', file)
+                const transmutedFilePath = await transmuteFile(file, item, resource.dest);
+                createdFiles.push(transmutedFilePath)
               }
               
               if (idx === scopedModel.length - 1){ 
+                // console.log('createdFiles --', createdFiles)
                 return createdFiles
               }
               
@@ -51,15 +52,13 @@ const transmute = async(resource, config)=>{
                 createIf = resource.if(scopedModel)
               }
               if(createIf){  
-                createdFiles.push(await transmuteFile(file, scopedModel, resource.dest));
+                const transmutedFilePath = await transmuteFile(file, scopedModel, resource.dest);
+                createdFiles.push(transmutedFilePath)
               }
             
+              // console.log('createdFiles --', createdFiles)
               return createdFiles;
           }
-          
-
-  return 'hola'
-      
       
   }
 

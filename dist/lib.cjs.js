@@ -2,15 +2,17 @@
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
+var Handlebars = require('handlebars');
+var Handlebars__default = _interopDefault(Handlebars);
 var jetpack$1 = _interopDefault(require('fs-jetpack'));
-var Handlebars = _interopDefault(require('handlebars'));
 
 const jetpack = require('fs-jetpack');
 
 const saveFilepathsAsJSON = async (createdFiles = [], buildName = "latest", root = '')=>{
     const res = await jetpack.writeAsync(`${root}/.engineer/.builds/${buildName}/index.json`, `{ 
             "files" : ${JSON.stringify(createdFiles)},
-            "buildAt" : "${new Date().toLocaleString('es-GT')}"
+            "buildAt" : "${new Date().toLocaleString('es-GT')}",
+            "buildName" : "${buildName}"
         }`);
 };
 
@@ -52,7 +54,7 @@ let generatePath = (dest, model)=>{
   return dest
 };
 
-Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+Handlebars__default.registerHelper('ifEquals', function(arg1, arg2, options) {
     // console.log((arg1 == arg2) ? options.fn(this) : options.inverse(this))
     return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
 });
@@ -61,12 +63,13 @@ let transmuteContents = (contents, model)=>{
 
 
         try{
-            let compiler = Handlebars.compile(contents);
+            let compiler = Handlebars__default.compile(contents);
             let res = compiler(model);
             return(res);
         }catch(err){
-            console.log('modelo que falla!!!', model);
+            // console.log('modelo que falla!!!', model)
             throw new Error(err)
+            // console.log('fail:  ',contents)
         }
     
 };
@@ -76,12 +79,11 @@ const transmuteFile = async (file, model, dest)=>{
   // Get file path
   dest = generatePath(dest, model);
 
-  // console.log('generatePath dest', dest)
-
   let rendered = transmuteContents(file.contents, model);
 
   jetpack$1.file(dest, { content : rendered });
   
+  // console.log(dest)
   return dest
   
 };
@@ -116,11 +118,12 @@ const transmute = async(resource, config)=>{
                   createIf = resource.if(item);
                 }
               if(createIf){  
-                createdFiles.push(await transmuteFile(file, item, resource.dest));
-                // console.log('transmuted---', file)
+                const transmutedFilePath = await transmuteFile(file, item, resource.dest);
+                createdFiles.push(transmutedFilePath);
               }
               
               if (idx === scopedModel.length - 1){ 
+                // console.log('createdFiles --', createdFiles)
                 return createdFiles
               }
               
@@ -132,15 +135,13 @@ const transmute = async(resource, config)=>{
                 createIf = resource.if(scopedModel);
               }
               if(createIf){  
-                createdFiles.push(await transmuteFile(file, scopedModel, resource.dest));
+                const transmutedFilePath = await transmuteFile(file, scopedModel, resource.dest);
+                createdFiles.push(transmutedFilePath);
               }
             
+              // console.log('createdFiles --', createdFiles)
               return createdFiles;
           }
-          
-
-  return 'hola'
-      
       
   };
 
@@ -166,19 +167,26 @@ const main = async(path = `${process.cwd()}/engineer.config.js`)=>{
   }
 
   // Execute engineer for each resource
-  config.resources.forEach(async (resource, i) =>{
-    
+  // config.resources.forEach(async (resource, i) =>{
+
+  for(let i = 0; i < config.resources.length; i++){
+
+    const resource = config.resources[i];
+
     const res = await transmute$1(resource, config);
+
     createdFiles.push(...res);
     
 
     if(i == (config.resources.length - 1)){
       // spinner.stop()
       const after = new Date();
-      console.log(`Build took ${after - before}ms`);
+      console.log(`Build took ${after - before}ms`, createdFiles);
       saveFilepathsAsJSON(createdFiles, 'latest', path.replace('/engineer.config.js', '/'));
     }
-  });
+
+  }
+  // })
 
 };
 

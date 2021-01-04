@@ -1,28 +1,18 @@
+const resources = require('./.engineer/index')
+const { utilsResources, serverResources, seederResources } = resources
+
 const config = {
-  model : {
-    hello : "world",
-    data : [
-      {
-        key : 'A'
-      },
-      {
-        key : 'B'
-      },
-      {
-        key : 'C'
-      }
-    ]
+  "options" : {
   },
-  resources : [
-    {
-      src : "./dev/files/hello.world.js",
-      dest : "./dev/dist/hello.world.js"
-    },
-    {
-      src : "./dev/files/dynamic.method.js",
-      dest : "./dev/dist/[key].method.js",
-      key : "data"
-    }
+  "model" : require("./.engineer/schema.json"),
+  "resources" : [
+    // Utils
+    ...utilsResources(),
+    // Server
+    ...serverResources(),
+    // Seeder
+    ...seederResources()
+    // Add your custom files after this comment
   ]
 }
 

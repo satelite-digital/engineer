@@ -8,12 +8,11 @@ const transmuteFile = async (file, model, dest)=>{
   // Get file path
   dest = generatePath(dest, model);
 
-  // console.log('generatePath dest', dest)
-
   let rendered = transmuteContents(file.contents, model);
 
   jetpack.file(dest, { content : rendered });
   
+  // console.log(dest)
   return dest
   
 }

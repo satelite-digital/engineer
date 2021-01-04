@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// model Organization {
+//   id    String    @default(uuid()) @id
+//   createdAt DateTime    @default(now()) 
+//   updatedAt DateTime    @default(now()) 
+//   title String
+//   description String?
+//   logo String?
+//   user User[]
+// }
+
+model Session {
+  access_token          String
+  createdAt             DateTime @default(now())
+  updatedAt DateTime    @default(now()) 
+  device                String?
+  device_info           String?
+  id                    String   @id @default(uuid())
+  id_token              String
+  ip                    String?
+  isAlive               Boolean
+  refresh_token         String
+  refresh_token_expires String?
+  userId                String
+  user                  User     @relation(fields: [userId], references: [id])
+}
+
+model Organization {
+    id    String    @default(uuid()) @id
+    createdAt DateTime    @default(now()) 
+    updatedAt DateTime    @default(now())
+    title String   
+    description String?   
+    logo String?   
+}
+
+model User {
+    id    String    @default(uuid()) @id
+    createdAt DateTime    @default(now()) 
+    updatedAt DateTime    @default(now())
+    authId String?   
+    email String  @unique 
+    name String   
+    picture String?   
+    type UserType   
+    organizationId String?
+    organization  Organization?  @relation(fields: [organizationId], references: [id])
+    app App[]
+    session Session[]
+}
+
+model App {
+    id    String    @default(uuid()) @id
+    createdAt DateTime    @default(now()) 
+    updatedAt DateTime    @default(now())
+    deletedAt DateTime?
+    isArchived Boolean  @default(false)
+    title String   
+    description String?   
+    body Json?   
+    isPublished Boolean    @default(false) 
+    userId String?
+    user  User?  @relation(fields: [userId], references: [id])
+    app_log AppLog[]
+}
+
+model AppLog {
+    id    String    @default(uuid()) @id
+    createdAt DateTime    @default(now()) 
+    updatedAt DateTime    @default(now())
+    action LogAction   
+    record Json   
+    appId String
+    app  App  @relation(fields: [appId], references: [id])
+    userId String
+    user  User  @relation(fields: [userId], references: [id])
+}
+
+
+  enum LogAction {
+      OPEN
+      DELETE
+      UPDATE
+      CREATE
+  }
+  enum UserType {
+      OPERATIVO
+      ADMIN
+      SUPERVISOR
+  }
+
+
