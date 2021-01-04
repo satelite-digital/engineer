@@ -1,17 +1,24 @@
 import fetchFile from "./../utils/fetchFile";
 import transmuteFile from "./transmuteFile";
 
+const returner = (value)=>{
+  return value
+}
 
 // Transmute main
 const transmute = async(resource, config)=>{
 
       let validModel = config.model; //  refactor
       let scopedModel;
+
+      let createdFiles = [];
+
       if(resource.hasOwnProperty('key')){
         scopedModel = validModel[resource.key]; // implementar lodash
       }else{
         scopedModel = validModel;
       }
+
 
      
           // fetchFiles
@@ -19,30 +26,39 @@ const transmute = async(resource, config)=>{
             
           if(Array.isArray(scopedModel)){
             
-            scopedModel.forEach(async item =>{
-              let createIf = true
-              if('if' in resource && typeof resource.if == 'function'){
-                createIf = resource.if(item)
-              }
+            // scopedModel.forEach(async (item, idx) =>{
+              for(let idx = 0; idx < scopedModel.length; idx++){
+                let item = scopedModel[idx]
+
+                let createIf = true
+                if('if' in resource && typeof resource.if == 'function'){
+                  createIf = resource.if(item)
+                }
               if(createIf){  
-                await transmuteFile(file, item, resource.dest);
+                createdFiles.push(await transmuteFile(file, item, resource.dest));
+                // console.log('transmuted---', file)
               }
-            })
+              
+              if (idx === scopedModel.length - 1){ 
+                return createdFiles
+              }
+              
+              }
+              // })
           }else{
             let createIf = true
               if('if' in resource && typeof resource.if == 'function'){
                 createIf = resource.if(scopedModel)
               }
               if(createIf){  
-                await transmuteFile(file, scopedModel, resource.dest);
+                createdFiles.push(await transmuteFile(file, scopedModel, resource.dest));
               }
             
+              return createdFiles;
           }
           
-        
-      
-        
-      return true;
+
+  return 'hola'
       
       
   }

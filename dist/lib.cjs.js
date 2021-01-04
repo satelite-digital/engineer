@@ -2,8 +2,17 @@
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var jetpack = _interopDefault(require('fs-jetpack'));
+var jetpack$1 = _interopDefault(require('fs-jetpack'));
 var Handlebars = _interopDefault(require('handlebars'));
+
+const jetpack = require('fs-jetpack');
+
+const saveFilepathsAsJSON = async (createdFiles = [], buildName = "latest", root = '')=>{
+    const res = await jetpack.writeAsync(`${root}/.engineer/.builds/${buildName}/index.json`, `{ 
+            "files" : ${JSON.stringify(createdFiles)},
+            "buildAt" : "${new Date().toLocaleString('es-GT')}"
+        }`);
+};
 
 // deberia ponerle path al file.
 
@@ -14,15 +23,15 @@ let fetchFile = async (path)=>{
   
   
       let file = {
-        ...jetpack.inspect(path),
+        ...jetpack$1.inspect(path),
         path,
-        contents : jetpack.read(path)
+        contents : jetpack$1.read(path)
       };
       files.push(file);
   
      
 
-  return files;
+  return files[0];
 };
 
 let generatePath = (dest, model)=>{
@@ -67,11 +76,13 @@ const transmuteFile = async (file, model, dest)=>{
   // Get file path
   dest = generatePath(dest, model);
 
-  let rendered = transmuteContents(file[0].contents, model);
+  // console.log('generatePath dest', dest)
 
-  jetpack.file(dest, { content : rendered });
+  let rendered = transmuteContents(file.contents, model);
+
+  jetpack$1.file(dest, { content : rendered });
   
-  return {dest, rendered, file : file[0].name }
+  return dest
   
 };
 
@@ -80,11 +91,15 @@ const transmute = async(resource, config)=>{
 
       let validModel = config.model; //  refactor
       let scopedModel;
+
+      let createdFiles = [];
+
       if(resource.hasOwnProperty('key')){
         scopedModel = validModel[resource.key]; // implementar lodash
       }else {
         scopedModel = validModel;
       }
+
 
      
           // fetchFiles
@@ -92,30 +107,39 @@ const transmute = async(resource, config)=>{
             
           if(Array.isArray(scopedModel)){
             
-            scopedModel.forEach(async item =>{
-              let createIf = true;
-              if('if' in resource && typeof resource.if == 'function'){
-                createIf = resource.if(item);
-              }
+            // scopedModel.forEach(async (item, idx) =>{
+              for(let idx = 0; idx < scopedModel.length; idx++){
+                let item = scopedModel[idx];
+
+                let createIf = true;
+                if('if' in resource && typeof resource.if == 'function'){
+                  createIf = resource.if(item);
+                }
               if(createIf){  
-                await transmuteFile(file, item, resource.dest);
+                createdFiles.push(await transmuteFile(file, item, resource.dest));
+                // console.log('transmuted---', file)
               }
-            });
+              
+              if (idx === scopedModel.length - 1){ 
+                return createdFiles
+              }
+              
+              }
+              // })
           }else {
             let createIf = true;
               if('if' in resource && typeof resource.if == 'function'){
                 createIf = resource.if(scopedModel);
               }
               if(createIf){  
-                await transmuteFile(file, scopedModel, resource.dest);
+                createdFiles.push(await transmuteFile(file, scopedModel, resource.dest));
               }
             
+              return createdFiles;
           }
           
-        
-      
-        
-      return true;
+
+  return 'hola'
       
       
   };
@@ -123,26 +147,39 @@ const transmute = async(resource, config)=>{
 const transmute$1 = transmute;
 
 const boxen = require('boxen');
-const ora = require('ora');
+// const ora = require('ora')
+
 
 const main = async(path = `${process.cwd()}/engineer.config.js`)=>{
-  console.log('init main');
+
   console.log(boxen('Engineer', {padding: 6, margin: 1, borderColor : "magenta" }));
-  const spinner = ora('Building project').start();
+
+  let createdFiles = [];
+
+  // const spinner = ora('Building project').start()
   const before = new Date();
+
   let config = require(path);
+
   if('then' in config){
     config = await config;
   }
+
   // Execute engineer for each resource
   config.resources.forEach(async (resource, i) =>{
-    await transmute$1(resource, config);
+    
+    const res = await transmute$1(resource, config);
+    createdFiles.push(...res);
+    
+
     if(i == (config.resources.length - 1)){
-      spinner.stop();
+      // spinner.stop()
       const after = new Date();
       console.log(`Build took ${after - before}ms`);
+      saveFilepathsAsJSON(createdFiles, 'latest', path.replace('/engineer.config.js', '/'));
     }
   });
+
 };
 
 module.exports = main;

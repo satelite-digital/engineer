@@ -18,7 +18,7 @@ let fetchFile = async (path)=>{
   
      
 
-  return files;
+  return files[0];
 }
 
 export default fetchFile;

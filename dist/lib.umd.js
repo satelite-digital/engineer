@@ -1,19 +1,18 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('os'), require('tty'), require('child_process'), require('path'), require('readline'), require('assert'), require('events'), require('stream'), require('util'), require('fs'), require('crypto')) :
-	typeof define === 'function' && define.amd ? define(['os', 'tty', 'child_process', 'path', 'readline', 'assert', 'events', 'stream', 'util', 'fs', 'crypto'], factory) :
-	(global = global || self, global.query = factory(global.os, global.tty, global.child_process, global.path$1, global.readline, global.assert, global.events, global.stream$1, global.util$4, global.fs, global.crypto));
-}(this, (function (os, tty, child_process, path$1, readline, assert, events, stream$1, util$4, fs, crypto) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('os'), require('tty'), require('child_process'), require('path'), require('util'), require('fs'), require('assert'), require('events'), require('stream'), require('crypto')) :
+	typeof define === 'function' && define.amd ? define(['os', 'tty', 'child_process', 'path', 'util', 'fs', 'assert', 'events', 'stream', 'crypto'], factory) :
+	(global = global || self, global.query = factory(global.os, global.tty, global.child_process, global.path$1, global.util$2, global.fs, global.assert, global.events, global.stream$1, global.crypto));
+}(this, (function (os, tty, child_process, path$1, util$2, fs, assert, events, stream$1, crypto) { 'use strict';
 
 	os = os && Object.prototype.hasOwnProperty.call(os, 'default') ? os['default'] : os;
 	tty = tty && Object.prototype.hasOwnProperty.call(tty, 'default') ? tty['default'] : tty;
 	child_process = child_process && Object.prototype.hasOwnProperty.call(child_process, 'default') ? child_process['default'] : child_process;
 	path$1 = path$1 && Object.prototype.hasOwnProperty.call(path$1, 'default') ? path$1['default'] : path$1;
-	readline = readline && Object.prototype.hasOwnProperty.call(readline, 'default') ? readline['default'] : readline;
+	util$2 = util$2 && Object.prototype.hasOwnProperty.call(util$2, 'default') ? util$2['default'] : util$2;
+	fs = fs && Object.prototype.hasOwnProperty.call(fs, 'default') ? fs['default'] : fs;
 	assert = assert && Object.prototype.hasOwnProperty.call(assert, 'default') ? assert['default'] : assert;
 	events = events && Object.prototype.hasOwnProperty.call(events, 'default') ? events['default'] : events;
 	stream$1 = stream$1 && Object.prototype.hasOwnProperty.call(stream$1, 'default') ? stream$1['default'] : stream$1;
-	util$4 = util$4 && Object.prototype.hasOwnProperty.call(util$4, 'default') ? util$4['default'] : util$4;
-	fs = fs && Object.prototype.hasOwnProperty.call(fs, 'default') ? fs['default'] : fs;
 	crypto = crypto && Object.prototype.hasOwnProperty.call(crypto, 'default') ? crypto['default'] : crypto;
 
 	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -2558,3484 +2557,6 @@
 	var _borderStyles = cliBoxes_1;
 	boxen._borderStyles = _borderStyles;
 
-	const stringReplaceAll$2 = (string, substring, replacer) => {
-		let index = string.indexOf(substring);
-		if (index === -1) {
-			return string;
-		}
-
-		const substringLength = substring.length;
-		let endIndex = 0;
-		let returnValue = '';
-		do {
-			returnValue += string.substr(endIndex, index - endIndex) + substring + replacer;
-			endIndex = index + substringLength;
-			index = string.indexOf(substring, endIndex);
-		} while (index !== -1);
-
-		returnValue += string.substr(endIndex);
-		return returnValue;
-	};
-
-	const stringEncaseCRLFWithFirstIndex$2 = (string, prefix, postfix, index) => {
-		let endIndex = 0;
-		let returnValue = '';
-		do {
-			const gotCR = string[index - 1] === '\r';
-			returnValue += string.substr(endIndex, (gotCR ? index - 1 : index) - endIndex) + prefix + (gotCR ? '\r\n' : '\n') + postfix;
-			endIndex = index + 1;
-			index = string.indexOf('\n', endIndex);
-		} while (index !== -1);
-
-		returnValue += string.substr(endIndex);
-		return returnValue;
-	};
-
-	var util$1 = {
-		stringReplaceAll: stringReplaceAll$2,
-		stringEncaseCRLFWithFirstIndex: stringEncaseCRLFWithFirstIndex$2
-	};
-
-	const TEMPLATE_REGEX$1 = /(?:\\(u(?:[a-f\d]{4}|\{[a-f\d]{1,6}\})|x[a-f\d]{2}|.))|(?:\{(~)?(\w+(?:\([^)]*\))?(?:\.\w+(?:\([^)]*\))?)*)(?:[ \t]|(?=\r?\n)))|(\})|((?:.|[\r\n\f])+?)/gi;
-	const STYLE_REGEX$1 = /(?:^|\.)(\w+)(?:\(([^)]*)\))?/g;
-	const STRING_REGEX$1 = /^(['"])((?:\\.|(?!\1)[^\\])*)\1$/;
-	const ESCAPE_REGEX$1 = /\\(u(?:[a-f\d]{4}|{[a-f\d]{1,6}})|x[a-f\d]{2}|.)|([^\\])/gi;
-
-	const ESCAPES$1 = new Map([
-		['n', '\n'],
-		['r', '\r'],
-		['t', '\t'],
-		['b', '\b'],
-		['f', '\f'],
-		['v', '\v'],
-		['0', '\0'],
-		['\\', '\\'],
-		['e', '\u001B'],
-		['a', '\u0007']
-	]);
-
-	function unescape$1(c) {
-		const u = c[0] === 'u';
-		const bracket = c[1] === '{';
-
-		if ((u && !bracket && c.length === 5) || (c[0] === 'x' && c.length === 3)) {
-			return String.fromCharCode(parseInt(c.slice(1), 16));
-		}
-
-		if (u && bracket) {
-			return String.fromCodePoint(parseInt(c.slice(2, -1), 16));
-		}
-
-		return ESCAPES$1.get(c) || c;
-	}
-
-	function parseArguments$1(name, arguments_) {
-		const results = [];
-		const chunks = arguments_.trim().split(/\s*,\s*/g);
-		let matches;
-
-		for (const chunk of chunks) {
-			const number = Number(chunk);
-			if (!Number.isNaN(number)) {
-				results.push(number);
-			} else if ((matches = chunk.match(STRING_REGEX$1))) {
-				results.push(matches[2].replace(ESCAPE_REGEX$1, (m, escape, character) => escape ? unescape$1(escape) : character));
-			} else {
-				throw new Error(`Invalid Chalk template style argument: ${chunk} (in style '${name}')`);
-			}
-		}
-
-		return results;
-	}
-
-	function parseStyle$1(style) {
-		STYLE_REGEX$1.lastIndex = 0;
-
-		const results = [];
-		let matches;
-
-		while ((matches = STYLE_REGEX$1.exec(style)) !== null) {
-			const name = matches[1];
-
-			if (matches[2]) {
-				const args = parseArguments$1(name, matches[2]);
-				results.push([name].concat(args));
-			} else {
-				results.push([name]);
-			}
-		}
-
-		return results;
-	}
-
-	function buildStyle$1(chalk, styles) {
-		const enabled = {};
-
-		for (const layer of styles) {
-			for (const style of layer.styles) {
-				enabled[style[0]] = layer.inverse ? null : style.slice(1);
-			}
-		}
-
-		let current = chalk;
-		for (const [styleName, styles] of Object.entries(enabled)) {
-			if (!Array.isArray(styles)) {
-				continue;
-			}
-
-			if (!(styleName in current)) {
-				throw new Error(`Unknown Chalk style: ${styleName}`);
-			}
-
-			current = styles.length > 0 ? current[styleName](...styles) : current[styleName];
-		}
-
-		return current;
-	}
-
-	var templates$1 = (chalk, temporary) => {
-		const styles = [];
-		const chunks = [];
-		let chunk = [];
-
-		// eslint-disable-next-line max-params
-		temporary.replace(TEMPLATE_REGEX$1, (m, escapeCharacter, inverse, style, close, character) => {
-			if (escapeCharacter) {
-				chunk.push(unescape$1(escapeCharacter));
-			} else if (style) {
-				const string = chunk.join('');
-				chunk = [];
-				chunks.push(styles.length === 0 ? string : buildStyle$1(chalk, styles)(string));
-				styles.push({inverse, styles: parseStyle$1(style)});
-			} else if (close) {
-				if (styles.length === 0) {
-					throw new Error('Found extraneous } in Chalk template literal');
-				}
-
-				chunks.push(buildStyle$1(chalk, styles)(chunk.join('')));
-				chunk = [];
-				styles.pop();
-			} else {
-				chunk.push(character);
-			}
-		});
-
-		chunks.push(chunk.join(''));
-
-		if (styles.length > 0) {
-			const errMessage = `Chalk template literal is missing ${styles.length} closing bracket${styles.length === 1 ? '' : 's'} (\`}\`)`;
-			throw new Error(errMessage);
-		}
-
-		return chunks.join('');
-	};
-
-	const {stdout: stdoutColor$1, stderr: stderrColor$1} = supportsColor_1;
-	const {
-		stringReplaceAll: stringReplaceAll$3,
-		stringEncaseCRLFWithFirstIndex: stringEncaseCRLFWithFirstIndex$3
-	} = util$1;
-
-	const {isArray} = Array;
-
-	// `supportsColor.level` → `ansiStyles.color[name]` mapping
-	const levelMapping$1 = [
-		'ansi',
-		'ansi',
-		'ansi256',
-		'ansi16m'
-	];
-
-	const styles$1 = Object.create(null);
-
-	const applyOptions$1 = (object, options = {}) => {
-		if (options.level && !(Number.isInteger(options.level) && options.level >= 0 && options.level <= 3)) {
-			throw new Error('The `level` option should be an integer from 0 to 3');
-		}
-
-		// Detect level if not set manually
-		const colorLevel = stdoutColor$1 ? stdoutColor$1.level : 0;
-		object.level = options.level === undefined ? colorLevel : options.level;
-	};
-
-	class ChalkClass$1 {
-		constructor(options) {
-			// eslint-disable-next-line no-constructor-return
-			return chalkFactory$1(options);
-		}
-	}
-
-	const chalkFactory$1 = options => {
-		const chalk = {};
-		applyOptions$1(chalk, options);
-
-		chalk.template = (...arguments_) => chalkTag$1(chalk.template, ...arguments_);
-
-		Object.setPrototypeOf(chalk, Chalk$1.prototype);
-		Object.setPrototypeOf(chalk.template, chalk);
-
-		chalk.template.constructor = () => {
-			throw new Error('`chalk.constructor()` is deprecated. Use `new chalk.Instance()` instead.');
-		};
-
-		chalk.template.Instance = ChalkClass$1;
-
-		return chalk.template;
-	};
-
-	function Chalk$1(options) {
-		return chalkFactory$1(options);
-	}
-
-	for (const [styleName, style] of Object.entries(ansiStyles)) {
-		styles$1[styleName] = {
-			get() {
-				const builder = createBuilder$1(this, createStyler$1(style.open, style.close, this._styler), this._isEmpty);
-				Object.defineProperty(this, styleName, {value: builder});
-				return builder;
-			}
-		};
-	}
-
-	styles$1.visible = {
-		get() {
-			const builder = createBuilder$1(this, this._styler, true);
-			Object.defineProperty(this, 'visible', {value: builder});
-			return builder;
-		}
-	};
-
-	const usedModels$1 = ['rgb', 'hex', 'keyword', 'hsl', 'hsv', 'hwb', 'ansi', 'ansi256'];
-
-	for (const model of usedModels$1) {
-		styles$1[model] = {
-			get() {
-				const {level} = this;
-				return function (...arguments_) {
-					const styler = createStyler$1(ansiStyles.color[levelMapping$1[level]][model](...arguments_), ansiStyles.color.close, this._styler);
-					return createBuilder$1(this, styler, this._isEmpty);
-				};
-			}
-		};
-	}
-
-	for (const model of usedModels$1) {
-		const bgModel = 'bg' + model[0].toUpperCase() + model.slice(1);
-		styles$1[bgModel] = {
-			get() {
-				const {level} = this;
-				return function (...arguments_) {
-					const styler = createStyler$1(ansiStyles.bgColor[levelMapping$1[level]][model](...arguments_), ansiStyles.bgColor.close, this._styler);
-					return createBuilder$1(this, styler, this._isEmpty);
-				};
-			}
-		};
-	}
-
-	const proto$1 = Object.defineProperties(() => {}, {
-		...styles$1,
-		level: {
-			enumerable: true,
-			get() {
-				return this._generator.level;
-			},
-			set(level) {
-				this._generator.level = level;
-			}
-		}
-	});
-
-	const createStyler$1 = (open, close, parent) => {
-		let openAll;
-		let closeAll;
-		if (parent === undefined) {
-			openAll = open;
-			closeAll = close;
-		} else {
-			openAll = parent.openAll + open;
-			closeAll = close + parent.closeAll;
-		}
-
-		return {
-			open,
-			close,
-			openAll,
-			closeAll,
-			parent
-		};
-	};
-
-	const createBuilder$1 = (self, _styler, _isEmpty) => {
-		const builder = (...arguments_) => {
-			if (isArray(arguments_[0]) && isArray(arguments_[0].raw)) {
-				// Called as a template literal, for example: chalk.red`2 + 3 = {bold ${2+3}}`
-				return applyStyle$1(builder, chalkTag$1(builder, ...arguments_));
-			}
-
-			// Single argument is hot path, implicit coercion is faster than anything
-			// eslint-disable-next-line no-implicit-coercion
-			return applyStyle$1(builder, (arguments_.length === 1) ? ('' + arguments_[0]) : arguments_.join(' '));
-		};
-
-		// We alter the prototype because we must return a function, but there is
-		// no way to create a function with a different prototype
-		Object.setPrototypeOf(builder, proto$1);
-
-		builder._generator = self;
-		builder._styler = _styler;
-		builder._isEmpty = _isEmpty;
-
-		return builder;
-	};
-
-	const applyStyle$1 = (self, string) => {
-		if (self.level <= 0 || !string) {
-			return self._isEmpty ? '' : string;
-		}
-
-		let styler = self._styler;
-
-		if (styler === undefined) {
-			return string;
-		}
-
-		const {openAll, closeAll} = styler;
-		if (string.indexOf('\u001B') !== -1) {
-			while (styler !== undefined) {
-				// Replace any instances already present with a re-opening code
-				// otherwise only the part of the string until said closing code
-				// will be colored, and the rest will simply be 'plain'.
-				string = stringReplaceAll$3(string, styler.close, styler.open);
-
-				styler = styler.parent;
-			}
-		}
-
-		// We can move both next actions out of loop, because remaining actions in loop won't have
-		// any/visible effect on parts we add here. Close the styling before a linebreak and reopen
-		// after next line to fix a bleed issue on macOS: https://github.com/chalk/chalk/pull/92
-		const lfIndex = string.indexOf('\n');
-		if (lfIndex !== -1) {
-			string = stringEncaseCRLFWithFirstIndex$3(string, closeAll, openAll, lfIndex);
-		}
-
-		return openAll + string + closeAll;
-	};
-
-	let template$1;
-	const chalkTag$1 = (chalk, ...strings) => {
-		const [firstString] = strings;
-
-		if (!isArray(firstString) || !isArray(firstString.raw)) {
-			// If chalk() was called by itself or with a string,
-			// return the string itself as a string.
-			return strings.join(' ');
-		}
-
-		const arguments_ = strings.slice(1);
-		const parts = [firstString.raw[0]];
-
-		for (let i = 1; i < firstString.length; i++) {
-			parts.push(
-				String(arguments_[i - 1]).replace(/[{}\\]/g, '\\$&'),
-				String(firstString.raw[i])
-			);
-		}
-
-		if (template$1 === undefined) {
-			template$1 = templates$1;
-		}
-
-		return template$1(chalk, parts.join(''));
-	};
-
-	Object.defineProperties(Chalk$1.prototype, styles$1);
-
-	const chalk$1 = Chalk$1(); // eslint-disable-line new-cap
-	chalk$1.supportsColor = stdoutColor$1;
-	chalk$1.stderr = Chalk$1({level: stderrColor$1 ? stderrColor$1.level : 0}); // eslint-disable-line new-cap
-	chalk$1.stderr.supportsColor = stderrColor$1;
-
-	var source$1 = chalk$1;
-
-	const mimicFn = (to, from) => {
-		for (const prop of Reflect.ownKeys(from)) {
-			Object.defineProperty(to, prop, Object.getOwnPropertyDescriptor(from, prop));
-		}
-
-		return to;
-	};
-
-	var mimicFn_1 = mimicFn;
-	// TODO: Remove this for the next major release
-	var _default$6 = mimicFn;
-	mimicFn_1.default = _default$6;
-
-	const calledFunctions = new WeakMap();
-
-	const onetime = (function_, options = {}) => {
-		if (typeof function_ !== 'function') {
-			throw new TypeError('Expected a function');
-		}
-
-		let returnValue;
-		let callCount = 0;
-		const functionName = function_.displayName || function_.name || '<anonymous>';
-
-		const onetime = function (...arguments_) {
-			calledFunctions.set(onetime, ++callCount);
-
-			if (callCount === 1) {
-				returnValue = function_.apply(this, arguments_);
-				function_ = null;
-			} else if (options.throw === true) {
-				throw new Error(`Function \`${functionName}\` can only be called once`);
-			}
-
-			return returnValue;
-		};
-
-		mimicFn_1(onetime, function_);
-		calledFunctions.set(onetime, callCount);
-
-		return onetime;
-	};
-
-	var onetime_1 = onetime;
-	// TODO: Remove this for the next major release
-	var _default$7 = onetime;
-
-	var callCount = function_ => {
-		if (!calledFunctions.has(function_)) {
-			throw new Error(`The given function \`${function_.name}\` is not wrapped by the \`onetime\` package`);
-		}
-
-		return calledFunctions.get(function_);
-	};
-	onetime_1.default = _default$7;
-	onetime_1.callCount = callCount;
-
-	var signals = createCommonjsModule(function (module) {
-	// This is not the set of all possible signals.
-	//
-	// It IS, however, the set of all signals that trigger
-	// an exit on either Linux or BSD systems.  Linux is a
-	// superset of the signal names supported on BSD, and
-	// the unknown signals just fail to register, so we can
-	// catch that easily enough.
-	//
-	// Don't bother with SIGKILL.  It's uncatchable, which
-	// means that we can't fire any callbacks anyway.
-	//
-	// If a user does happen to register a handler on a non-
-	// fatal signal like SIGWINCH or something, and then
-	// exit, it'll end up firing `process.emit('exit')`, so
-	// the handler will be fired anyway.
-	//
-	// SIGBUS, SIGFPE, SIGSEGV and SIGILL, when not raised
-	// artificially, inherently leave the process in a
-	// state from which it is not safe to try and enter JS
-	// listeners.
-	module.exports = [
-	  'SIGABRT',
-	  'SIGALRM',
-	  'SIGHUP',
-	  'SIGINT',
-	  'SIGTERM'
-	];
-
-	if (process.platform !== 'win32') {
-	  module.exports.push(
-	    'SIGVTALRM',
-	    'SIGXCPU',
-	    'SIGXFSZ',
-	    'SIGUSR2',
-	    'SIGTRAP',
-	    'SIGSYS',
-	    'SIGQUIT',
-	    'SIGIOT'
-	    // should detect profiler and enable/disable accordingly.
-	    // see #21
-	    // 'SIGPROF'
-	  );
-	}
-
-	if (process.platform === 'linux') {
-	  module.exports.push(
-	    'SIGIO',
-	    'SIGPOLL',
-	    'SIGPWR',
-	    'SIGSTKFLT',
-	    'SIGUNUSED'
-	  );
-	}
-	});
-
-	// Note: since nyc uses this module to output coverage, any lines
-	// that are in the direct sync flow of nyc's outputCoverage are
-	// ignored, since we can never get coverage for them.
-
-	var signals$1 = signals;
-	var isWin = /^win/i.test(process.platform);
-
-	var EE = events;
-	/* istanbul ignore if */
-	if (typeof EE !== 'function') {
-	  EE = EE.EventEmitter;
-	}
-
-	var emitter;
-	if (process.__signal_exit_emitter__) {
-	  emitter = process.__signal_exit_emitter__;
-	} else {
-	  emitter = process.__signal_exit_emitter__ = new EE();
-	  emitter.count = 0;
-	  emitter.emitted = {};
-	}
-
-	// Because this emitter is a global, we have to check to see if a
-	// previous version of this library failed to enable infinite listeners.
-	// I know what you're about to say.  But literally everything about
-	// signal-exit is a compromise with evil.  Get used to it.
-	if (!emitter.infinite) {
-	  emitter.setMaxListeners(Infinity);
-	  emitter.infinite = true;
-	}
-
-	var signalExit = function (cb, opts) {
-	  assert.equal(typeof cb, 'function', 'a callback must be provided for exit handler');
-
-	  if (loaded === false) {
-	    load();
-	  }
-
-	  var ev = 'exit';
-	  if (opts && opts.alwaysLast) {
-	    ev = 'afterexit';
-	  }
-
-	  var remove = function () {
-	    emitter.removeListener(ev, cb);
-	    if (emitter.listeners('exit').length === 0 &&
-	        emitter.listeners('afterexit').length === 0) {
-	      unload();
-	    }
-	  };
-	  emitter.on(ev, cb);
-
-	  return remove
-	};
-
-	var unload_1 = unload;
-	function unload () {
-	  if (!loaded) {
-	    return
-	  }
-	  loaded = false;
-
-	  signals$1.forEach(function (sig) {
-	    try {
-	      process.removeListener(sig, sigListeners[sig]);
-	    } catch (er) {}
-	  });
-	  process.emit = originalProcessEmit;
-	  process.reallyExit = originalProcessReallyExit;
-	  emitter.count -= 1;
-	}
-
-	function emit (event, code, signal) {
-	  if (emitter.emitted[event]) {
-	    return
-	  }
-	  emitter.emitted[event] = true;
-	  emitter.emit(event, code, signal);
-	}
-
-	// { <signal>: <listener fn>, ... }
-	var sigListeners = {};
-	signals$1.forEach(function (sig) {
-	  sigListeners[sig] = function listener () {
-	    // If there are no other listeners, an exit is coming!
-	    // Simplest way: remove us and then re-send the signal.
-	    // We know that this will kill the process, so we can
-	    // safely emit now.
-	    var listeners = process.listeners(sig);
-	    if (listeners.length === emitter.count) {
-	      unload();
-	      emit('exit', null, sig);
-	      /* istanbul ignore next */
-	      emit('afterexit', null, sig);
-	      /* istanbul ignore next */
-	      if (isWin && sig === 'SIGHUP') {
-	        // "SIGHUP" throws an `ENOSYS` error on Windows,
-	        // so use a supported signal instead
-	        sig = 'SIGINT';
-	      }
-	      process.kill(process.pid, sig);
-	    }
-	  };
-	});
-
-	var signals_1 = function () {
-	  return signals$1
-	};
-
-	var load_1 = load;
-
-	var loaded = false;
-
-	function load () {
-	  if (loaded) {
-	    return
-	  }
-	  loaded = true;
-
-	  // This is the number of onSignalExit's that are in play.
-	  // It's important so that we can count the correct number of
-	  // listeners on signals, and don't wait for the other one to
-	  // handle it instead of us.
-	  emitter.count += 1;
-
-	  signals$1 = signals$1.filter(function (sig) {
-	    try {
-	      process.on(sig, sigListeners[sig]);
-	      return true
-	    } catch (er) {
-	      return false
-	    }
-	  });
-
-	  process.emit = processEmit;
-	  process.reallyExit = processReallyExit;
-	}
-
-	var originalProcessReallyExit = process.reallyExit;
-	function processReallyExit (code) {
-	  process.exitCode = code || 0;
-	  emit('exit', process.exitCode, null);
-	  /* istanbul ignore next */
-	  emit('afterexit', process.exitCode, null);
-	  /* istanbul ignore next */
-	  originalProcessReallyExit.call(process, process.exitCode);
-	}
-
-	var originalProcessEmit = process.emit;
-	function processEmit (ev, arg) {
-	  if (ev === 'exit') {
-	    if (arg !== undefined) {
-	      process.exitCode = arg;
-	    }
-	    var ret = originalProcessEmit.apply(this, arguments);
-	    emit('exit', process.exitCode, null);
-	    /* istanbul ignore next */
-	    emit('afterexit', process.exitCode, null);
-	    return ret
-	  } else {
-	    return originalProcessEmit.apply(this, arguments)
-	  }
-	}
-	signalExit.unload = unload_1;
-	signalExit.signals = signals_1;
-	signalExit.load = load_1;
-
-	var restoreCursor = onetime_1(() => {
-		signalExit(() => {
-			process.stderr.write('\u001B[?25h');
-		}, {alwaysLast: true});
-	});
-
-	var cliCursor = createCommonjsModule(function (module, exports) {
-
-
-	let isHidden = false;
-
-	exports.show = (writableStream = process.stderr) => {
-		if (!writableStream.isTTY) {
-			return;
-		}
-
-		isHidden = false;
-		writableStream.write('\u001B[?25h');
-	};
-
-	exports.hide = (writableStream = process.stderr) => {
-		if (!writableStream.isTTY) {
-			return;
-		}
-
-		restoreCursor();
-		isHidden = true;
-		writableStream.write('\u001B[?25l');
-	};
-
-	exports.toggle = (force, writableStream) => {
-		if (force !== undefined) {
-			isHidden = force;
-		}
-
-		if (isHidden) {
-			exports.show(writableStream);
-		} else {
-			exports.hide(writableStream);
-		}
-	};
-	});
-	var cliCursor_1 = cliCursor.show;
-	var cliCursor_2 = cliCursor.hide;
-	var cliCursor_3 = cliCursor.toggle;
-
-	var dots = {
-		interval: 80,
-		frames: [
-			"⠋",
-			"⠙",
-			"⠹",
-			"⠸",
-			"⠼",
-			"⠴",
-			"⠦",
-			"⠧",
-			"⠇",
-			"⠏"
-		]
-	};
-	var dots2 = {
-		interval: 80,
-		frames: [
-			"⣾",
-			"⣽",
-			"⣻",
-			"⢿",
-			"⡿",
-			"⣟",
-			"⣯",
-			"⣷"
-		]
-	};
-	var dots3 = {
-		interval: 80,
-		frames: [
-			"⠋",
-			"⠙",
-			"⠚",
-			"⠞",
-			"⠖",
-			"⠦",
-			"⠴",
-			"⠲",
-			"⠳",
-			"⠓"
-		]
-	};
-	var dots4 = {
-		interval: 80,
-		frames: [
-			"⠄",
-			"⠆",
-			"⠇",
-			"⠋",
-			"⠙",
-			"⠸",
-			"⠰",
-			"⠠",
-			"⠰",
-			"⠸",
-			"⠙",
-			"⠋",
-			"⠇",
-			"⠆"
-		]
-	};
-	var dots5 = {
-		interval: 80,
-		frames: [
-			"⠋",
-			"⠙",
-			"⠚",
-			"⠒",
-			"⠂",
-			"⠂",
-			"⠒",
-			"⠲",
-			"⠴",
-			"⠦",
-			"⠖",
-			"⠒",
-			"⠐",
-			"⠐",
-			"⠒",
-			"⠓",
-			"⠋"
-		]
-	};
-	var dots6 = {
-		interval: 80,
-		frames: [
-			"⠁",
-			"⠉",
-			"⠙",
-			"⠚",
-			"⠒",
-			"⠂",
-			"⠂",
-			"⠒",
-			"⠲",
-			"⠴",
-			"⠤",
-			"⠄",
-			"⠄",
-			"⠤",
-			"⠴",
-			"⠲",
-			"⠒",
-			"⠂",
-			"⠂",
-			"⠒",
-			"⠚",
-			"⠙",
-			"⠉",
-			"⠁"
-		]
-	};
-	var dots7 = {
-		interval: 80,
-		frames: [
-			"⠈",
-			"⠉",
-			"⠋",
-			"⠓",
-			"⠒",
-			"⠐",
-			"⠐",
-			"⠒",
-			"⠖",
-			"⠦",
-			"⠤",
-			"⠠",
-			"⠠",
-			"⠤",
-			"⠦",
-			"⠖",
-			"⠒",
-			"⠐",
-			"⠐",
-			"⠒",
-			"⠓",
-			"⠋",
-			"⠉",
-			"⠈"
-		]
-	};
-	var dots8 = {
-		interval: 80,
-		frames: [
-			"⠁",
-			"⠁",
-			"⠉",
-			"⠙",
-			"⠚",
-			"⠒",
-			"⠂",
-			"⠂",
-			"⠒",
-			"⠲",
-			"⠴",
-			"⠤",
-			"⠄",
-			"⠄",
-			"⠤",
-			"⠠",
-			"⠠",
-			"⠤",
-			"⠦",
-			"⠖",
-			"⠒",
-			"⠐",
-			"⠐",
-			"⠒",
-			"⠓",
-			"⠋",
-			"⠉",
-			"⠈",
-			"⠈"
-		]
-	};
-	var dots9 = {
-		interval: 80,
-		frames: [
-			"⢹",
-			"⢺",
-			"⢼",
-			"⣸",
-			"⣇",
-			"⡧",
-			"⡗",
-			"⡏"
-		]
-	};
-	var dots10 = {
-		interval: 80,
-		frames: [
-			"⢄",
-			"⢂",
-			"⢁",
-			"⡁",
-			"⡈",
-			"⡐",
-			"⡠"
-		]
-	};
-	var dots11 = {
-		interval: 100,
-		frames: [
-			"⠁",
-			"⠂",
-			"⠄",
-			"⡀",
-			"⢀",
-			"⠠",
-			"⠐",
-			"⠈"
-		]
-	};
-	var dots12 = {
-		interval: 80,
-		frames: [
-			"⢀⠀",
-			"⡀⠀",
-			"⠄⠀",
-			"⢂⠀",
-			"⡂⠀",
-			"⠅⠀",
-			"⢃⠀",
-			"⡃⠀",
-			"⠍⠀",
-			"⢋⠀",
-			"⡋⠀",
-			"⠍⠁",
-			"⢋⠁",
-			"⡋⠁",
-			"⠍⠉",
-			"⠋⠉",
-			"⠋⠉",
-			"⠉⠙",
-			"⠉⠙",
-			"⠉⠩",
-			"⠈⢙",
-			"⠈⡙",
-			"⢈⠩",
-			"⡀⢙",
-			"⠄⡙",
-			"⢂⠩",
-			"⡂⢘",
-			"⠅⡘",
-			"⢃⠨",
-			"⡃⢐",
-			"⠍⡐",
-			"⢋⠠",
-			"⡋⢀",
-			"⠍⡁",
-			"⢋⠁",
-			"⡋⠁",
-			"⠍⠉",
-			"⠋⠉",
-			"⠋⠉",
-			"⠉⠙",
-			"⠉⠙",
-			"⠉⠩",
-			"⠈⢙",
-			"⠈⡙",
-			"⠈⠩",
-			"⠀⢙",
-			"⠀⡙",
-			"⠀⠩",
-			"⠀⢘",
-			"⠀⡘",
-			"⠀⠨",
-			"⠀⢐",
-			"⠀⡐",
-			"⠀⠠",
-			"⠀⢀",
-			"⠀⡀"
-		]
-	};
-	var dots8Bit = {
-		interval: 80,
-		frames: [
-			"⠀",
-			"⠁",
-			"⠂",
-			"⠃",
-			"⠄",
-			"⠅",
-			"⠆",
-			"⠇",
-			"⡀",
-			"⡁",
-			"⡂",
-			"⡃",
-			"⡄",
-			"⡅",
-			"⡆",
-			"⡇",
-			"⠈",
-			"⠉",
-			"⠊",
-			"⠋",
-			"⠌",
-			"⠍",
-			"⠎",
-			"⠏",
-			"⡈",
-			"⡉",
-			"⡊",
-			"⡋",
-			"⡌",
-			"⡍",
-			"⡎",
-			"⡏",
-			"⠐",
-			"⠑",
-			"⠒",
-			"⠓",
-			"⠔",
-			"⠕",
-			"⠖",
-			"⠗",
-			"⡐",
-			"⡑",
-			"⡒",
-			"⡓",
-			"⡔",
-			"⡕",
-			"⡖",
-			"⡗",
-			"⠘",
-			"⠙",
-			"⠚",
-			"⠛",
-			"⠜",
-			"⠝",
-			"⠞",
-			"⠟",
-			"⡘",
-			"⡙",
-			"⡚",
-			"⡛",
-			"⡜",
-			"⡝",
-			"⡞",
-			"⡟",
-			"⠠",
-			"⠡",
-			"⠢",
-			"⠣",
-			"⠤",
-			"⠥",
-			"⠦",
-			"⠧",
-			"⡠",
-			"⡡",
-			"⡢",
-			"⡣",
-			"⡤",
-			"⡥",
-			"⡦",
-			"⡧",
-			"⠨",
-			"⠩",
-			"⠪",
-			"⠫",
-			"⠬",
-			"⠭",
-			"⠮",
-			"⠯",
-			"⡨",
-			"⡩",
-			"⡪",
-			"⡫",
-			"⡬",
-			"⡭",
-			"⡮",
-			"⡯",
-			"⠰",
-			"⠱",
-			"⠲",
-			"⠳",
-			"⠴",
-			"⠵",
-			"⠶",
-			"⠷",
-			"⡰",
-			"⡱",
-			"⡲",
-			"⡳",
-			"⡴",
-			"⡵",
-			"⡶",
-			"⡷",
-			"⠸",
-			"⠹",
-			"⠺",
-			"⠻",
-			"⠼",
-			"⠽",
-			"⠾",
-			"⠿",
-			"⡸",
-			"⡹",
-			"⡺",
-			"⡻",
-			"⡼",
-			"⡽",
-			"⡾",
-			"⡿",
-			"⢀",
-			"⢁",
-			"⢂",
-			"⢃",
-			"⢄",
-			"⢅",
-			"⢆",
-			"⢇",
-			"⣀",
-			"⣁",
-			"⣂",
-			"⣃",
-			"⣄",
-			"⣅",
-			"⣆",
-			"⣇",
-			"⢈",
-			"⢉",
-			"⢊",
-			"⢋",
-			"⢌",
-			"⢍",
-			"⢎",
-			"⢏",
-			"⣈",
-			"⣉",
-			"⣊",
-			"⣋",
-			"⣌",
-			"⣍",
-			"⣎",
-			"⣏",
-			"⢐",
-			"⢑",
-			"⢒",
-			"⢓",
-			"⢔",
-			"⢕",
-			"⢖",
-			"⢗",
-			"⣐",
-			"⣑",
-			"⣒",
-			"⣓",
-			"⣔",
-			"⣕",
-			"⣖",
-			"⣗",
-			"⢘",
-			"⢙",
-			"⢚",
-			"⢛",
-			"⢜",
-			"⢝",
-			"⢞",
-			"⢟",
-			"⣘",
-			"⣙",
-			"⣚",
-			"⣛",
-			"⣜",
-			"⣝",
-			"⣞",
-			"⣟",
-			"⢠",
-			"⢡",
-			"⢢",
-			"⢣",
-			"⢤",
-			"⢥",
-			"⢦",
-			"⢧",
-			"⣠",
-			"⣡",
-			"⣢",
-			"⣣",
-			"⣤",
-			"⣥",
-			"⣦",
-			"⣧",
-			"⢨",
-			"⢩",
-			"⢪",
-			"⢫",
-			"⢬",
-			"⢭",
-			"⢮",
-			"⢯",
-			"⣨",
-			"⣩",
-			"⣪",
-			"⣫",
-			"⣬",
-			"⣭",
-			"⣮",
-			"⣯",
-			"⢰",
-			"⢱",
-			"⢲",
-			"⢳",
-			"⢴",
-			"⢵",
-			"⢶",
-			"⢷",
-			"⣰",
-			"⣱",
-			"⣲",
-			"⣳",
-			"⣴",
-			"⣵",
-			"⣶",
-			"⣷",
-			"⢸",
-			"⢹",
-			"⢺",
-			"⢻",
-			"⢼",
-			"⢽",
-			"⢾",
-			"⢿",
-			"⣸",
-			"⣹",
-			"⣺",
-			"⣻",
-			"⣼",
-			"⣽",
-			"⣾",
-			"⣿"
-		]
-	};
-	var line = {
-		interval: 130,
-		frames: [
-			"-",
-			"\\",
-			"|",
-			"/"
-		]
-	};
-	var line2 = {
-		interval: 100,
-		frames: [
-			"⠂",
-			"-",
-			"–",
-			"—",
-			"–",
-			"-"
-		]
-	};
-	var pipe = {
-		interval: 100,
-		frames: [
-			"┤",
-			"┘",
-			"┴",
-			"└",
-			"├",
-			"┌",
-			"┬",
-			"┐"
-		]
-	};
-	var simpleDots = {
-		interval: 400,
-		frames: [
-			".  ",
-			".. ",
-			"...",
-			"   "
-		]
-	};
-	var simpleDotsScrolling = {
-		interval: 200,
-		frames: [
-			".  ",
-			".. ",
-			"...",
-			" ..",
-			"  .",
-			"   "
-		]
-	};
-	var star = {
-		interval: 70,
-		frames: [
-			"✶",
-			"✸",
-			"✹",
-			"✺",
-			"✹",
-			"✷"
-		]
-	};
-	var star2 = {
-		interval: 80,
-		frames: [
-			"+",
-			"x",
-			"*"
-		]
-	};
-	var flip = {
-		interval: 70,
-		frames: [
-			"_",
-			"_",
-			"_",
-			"-",
-			"`",
-			"`",
-			"'",
-			"´",
-			"-",
-			"_",
-			"_",
-			"_"
-		]
-	};
-	var hamburger = {
-		interval: 100,
-		frames: [
-			"☱",
-			"☲",
-			"☴"
-		]
-	};
-	var growVertical = {
-		interval: 120,
-		frames: [
-			"▁",
-			"▃",
-			"▄",
-			"▅",
-			"▆",
-			"▇",
-			"▆",
-			"▅",
-			"▄",
-			"▃"
-		]
-	};
-	var growHorizontal = {
-		interval: 120,
-		frames: [
-			"▏",
-			"▎",
-			"▍",
-			"▌",
-			"▋",
-			"▊",
-			"▉",
-			"▊",
-			"▋",
-			"▌",
-			"▍",
-			"▎"
-		]
-	};
-	var balloon = {
-		interval: 140,
-		frames: [
-			" ",
-			".",
-			"o",
-			"O",
-			"@",
-			"*",
-			" "
-		]
-	};
-	var balloon2 = {
-		interval: 120,
-		frames: [
-			".",
-			"o",
-			"O",
-			"°",
-			"O",
-			"o",
-			"."
-		]
-	};
-	var noise = {
-		interval: 100,
-		frames: [
-			"▓",
-			"▒",
-			"░"
-		]
-	};
-	var bounce = {
-		interval: 120,
-		frames: [
-			"⠁",
-			"⠂",
-			"⠄",
-			"⠂"
-		]
-	};
-	var boxBounce = {
-		interval: 120,
-		frames: [
-			"▖",
-			"▘",
-			"▝",
-			"▗"
-		]
-	};
-	var boxBounce2 = {
-		interval: 100,
-		frames: [
-			"▌",
-			"▀",
-			"▐",
-			"▄"
-		]
-	};
-	var triangle = {
-		interval: 50,
-		frames: [
-			"◢",
-			"◣",
-			"◤",
-			"◥"
-		]
-	};
-	var arc = {
-		interval: 100,
-		frames: [
-			"◜",
-			"◠",
-			"◝",
-			"◞",
-			"◡",
-			"◟"
-		]
-	};
-	var circle = {
-		interval: 120,
-		frames: [
-			"◡",
-			"⊙",
-			"◠"
-		]
-	};
-	var squareCorners = {
-		interval: 180,
-		frames: [
-			"◰",
-			"◳",
-			"◲",
-			"◱"
-		]
-	};
-	var circleQuarters = {
-		interval: 120,
-		frames: [
-			"◴",
-			"◷",
-			"◶",
-			"◵"
-		]
-	};
-	var circleHalves = {
-		interval: 50,
-		frames: [
-			"◐",
-			"◓",
-			"◑",
-			"◒"
-		]
-	};
-	var squish = {
-		interval: 100,
-		frames: [
-			"╫",
-			"╪"
-		]
-	};
-	var toggle = {
-		interval: 250,
-		frames: [
-			"⊶",
-			"⊷"
-		]
-	};
-	var toggle2 = {
-		interval: 80,
-		frames: [
-			"▫",
-			"▪"
-		]
-	};
-	var toggle3 = {
-		interval: 120,
-		frames: [
-			"□",
-			"■"
-		]
-	};
-	var toggle4 = {
-		interval: 100,
-		frames: [
-			"■",
-			"□",
-			"▪",
-			"▫"
-		]
-	};
-	var toggle5 = {
-		interval: 100,
-		frames: [
-			"▮",
-			"▯"
-		]
-	};
-	var toggle6 = {
-		interval: 300,
-		frames: [
-			"ဝ",
-			"၀"
-		]
-	};
-	var toggle7 = {
-		interval: 80,
-		frames: [
-			"⦾",
-			"⦿"
-		]
-	};
-	var toggle8 = {
-		interval: 100,
-		frames: [
-			"◍",
-			"◌"
-		]
-	};
-	var toggle9 = {
-		interval: 100,
-		frames: [
-			"◉",
-			"◎"
-		]
-	};
-	var toggle10 = {
-		interval: 100,
-		frames: [
-			"㊂",
-			"㊀",
-			"㊁"
-		]
-	};
-	var toggle11 = {
-		interval: 50,
-		frames: [
-			"⧇",
-			"⧆"
-		]
-	};
-	var toggle12 = {
-		interval: 120,
-		frames: [
-			"☗",
-			"☖"
-		]
-	};
-	var toggle13 = {
-		interval: 80,
-		frames: [
-			"=",
-			"*",
-			"-"
-		]
-	};
-	var arrow = {
-		interval: 100,
-		frames: [
-			"←",
-			"↖",
-			"↑",
-			"↗",
-			"→",
-			"↘",
-			"↓",
-			"↙"
-		]
-	};
-	var arrow2 = {
-		interval: 80,
-		frames: [
-			"⬆️ ",
-			"↗️ ",
-			"➡️ ",
-			"↘️ ",
-			"⬇️ ",
-			"↙️ ",
-			"⬅️ ",
-			"↖️ "
-		]
-	};
-	var arrow3 = {
-		interval: 120,
-		frames: [
-			"▹▹▹▹▹",
-			"▸▹▹▹▹",
-			"▹▸▹▹▹",
-			"▹▹▸▹▹",
-			"▹▹▹▸▹",
-			"▹▹▹▹▸"
-		]
-	};
-	var bouncingBar = {
-		interval: 80,
-		frames: [
-			"[    ]",
-			"[=   ]",
-			"[==  ]",
-			"[=== ]",
-			"[ ===]",
-			"[  ==]",
-			"[   =]",
-			"[    ]",
-			"[   =]",
-			"[  ==]",
-			"[ ===]",
-			"[====]",
-			"[=== ]",
-			"[==  ]",
-			"[=   ]"
-		]
-	};
-	var bouncingBall = {
-		interval: 80,
-		frames: [
-			"( ●    )",
-			"(  ●   )",
-			"(   ●  )",
-			"(    ● )",
-			"(     ●)",
-			"(    ● )",
-			"(   ●  )",
-			"(  ●   )",
-			"( ●    )",
-			"(●     )"
-		]
-	};
-	var smiley = {
-		interval: 200,
-		frames: [
-			"😄 ",
-			"😝 "
-		]
-	};
-	var monkey = {
-		interval: 300,
-		frames: [
-			"🙈 ",
-			"🙈 ",
-			"🙉 ",
-			"🙊 "
-		]
-	};
-	var hearts = {
-		interval: 100,
-		frames: [
-			"💛 ",
-			"💙 ",
-			"💜 ",
-			"💚 ",
-			"❤️ "
-		]
-	};
-	var clock = {
-		interval: 100,
-		frames: [
-			"🕛 ",
-			"🕐 ",
-			"🕑 ",
-			"🕒 ",
-			"🕓 ",
-			"🕔 ",
-			"🕕 ",
-			"🕖 ",
-			"🕗 ",
-			"🕘 ",
-			"🕙 ",
-			"🕚 "
-		]
-	};
-	var earth = {
-		interval: 180,
-		frames: [
-			"🌍 ",
-			"🌎 ",
-			"🌏 "
-		]
-	};
-	var material = {
-		interval: 17,
-		frames: [
-			"█▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁",
-			"██▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁",
-			"███▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁",
-			"████▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁",
-			"██████▁▁▁▁▁▁▁▁▁▁▁▁▁▁",
-			"██████▁▁▁▁▁▁▁▁▁▁▁▁▁▁",
-			"███████▁▁▁▁▁▁▁▁▁▁▁▁▁",
-			"████████▁▁▁▁▁▁▁▁▁▁▁▁",
-			"█████████▁▁▁▁▁▁▁▁▁▁▁",
-			"█████████▁▁▁▁▁▁▁▁▁▁▁",
-			"██████████▁▁▁▁▁▁▁▁▁▁",
-			"███████████▁▁▁▁▁▁▁▁▁",
-			"█████████████▁▁▁▁▁▁▁",
-			"██████████████▁▁▁▁▁▁",
-			"██████████████▁▁▁▁▁▁",
-			"▁██████████████▁▁▁▁▁",
-			"▁██████████████▁▁▁▁▁",
-			"▁██████████████▁▁▁▁▁",
-			"▁▁██████████████▁▁▁▁",
-			"▁▁▁██████████████▁▁▁",
-			"▁▁▁▁█████████████▁▁▁",
-			"▁▁▁▁██████████████▁▁",
-			"▁▁▁▁██████████████▁▁",
-			"▁▁▁▁▁██████████████▁",
-			"▁▁▁▁▁██████████████▁",
-			"▁▁▁▁▁██████████████▁",
-			"▁▁▁▁▁▁██████████████",
-			"▁▁▁▁▁▁██████████████",
-			"▁▁▁▁▁▁▁█████████████",
-			"▁▁▁▁▁▁▁█████████████",
-			"▁▁▁▁▁▁▁▁████████████",
-			"▁▁▁▁▁▁▁▁████████████",
-			"▁▁▁▁▁▁▁▁▁███████████",
-			"▁▁▁▁▁▁▁▁▁███████████",
-			"▁▁▁▁▁▁▁▁▁▁██████████",
-			"▁▁▁▁▁▁▁▁▁▁██████████",
-			"▁▁▁▁▁▁▁▁▁▁▁▁████████",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁███████",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁██████",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█████",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█████",
-			"█▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁████",
-			"██▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁███",
-			"██▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁███",
-			"███▁▁▁▁▁▁▁▁▁▁▁▁▁▁███",
-			"████▁▁▁▁▁▁▁▁▁▁▁▁▁▁██",
-			"█████▁▁▁▁▁▁▁▁▁▁▁▁▁▁█",
-			"█████▁▁▁▁▁▁▁▁▁▁▁▁▁▁█",
-			"██████▁▁▁▁▁▁▁▁▁▁▁▁▁█",
-			"████████▁▁▁▁▁▁▁▁▁▁▁▁",
-			"█████████▁▁▁▁▁▁▁▁▁▁▁",
-			"█████████▁▁▁▁▁▁▁▁▁▁▁",
-			"█████████▁▁▁▁▁▁▁▁▁▁▁",
-			"█████████▁▁▁▁▁▁▁▁▁▁▁",
-			"███████████▁▁▁▁▁▁▁▁▁",
-			"████████████▁▁▁▁▁▁▁▁",
-			"████████████▁▁▁▁▁▁▁▁",
-			"██████████████▁▁▁▁▁▁",
-			"██████████████▁▁▁▁▁▁",
-			"▁██████████████▁▁▁▁▁",
-			"▁██████████████▁▁▁▁▁",
-			"▁▁▁█████████████▁▁▁▁",
-			"▁▁▁▁▁████████████▁▁▁",
-			"▁▁▁▁▁████████████▁▁▁",
-			"▁▁▁▁▁▁███████████▁▁▁",
-			"▁▁▁▁▁▁▁▁█████████▁▁▁",
-			"▁▁▁▁▁▁▁▁█████████▁▁▁",
-			"▁▁▁▁▁▁▁▁▁█████████▁▁",
-			"▁▁▁▁▁▁▁▁▁█████████▁▁",
-			"▁▁▁▁▁▁▁▁▁▁█████████▁",
-			"▁▁▁▁▁▁▁▁▁▁▁████████▁",
-			"▁▁▁▁▁▁▁▁▁▁▁████████▁",
-			"▁▁▁▁▁▁▁▁▁▁▁▁███████▁",
-			"▁▁▁▁▁▁▁▁▁▁▁▁███████▁",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁███████",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁███████",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█████",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁████",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁████",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁████",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁███",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁███",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁██",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁██",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁██",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁",
-			"▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁"
-		]
-	};
-	var moon = {
-		interval: 80,
-		frames: [
-			"🌑 ",
-			"🌒 ",
-			"🌓 ",
-			"🌔 ",
-			"🌕 ",
-			"🌖 ",
-			"🌗 ",
-			"🌘 "
-		]
-	};
-	var runner = {
-		interval: 140,
-		frames: [
-			"🚶 ",
-			"🏃 "
-		]
-	};
-	var pong = {
-		interval: 80,
-		frames: [
-			"▐⠂       ▌",
-			"▐⠈       ▌",
-			"▐ ⠂      ▌",
-			"▐ ⠠      ▌",
-			"▐  ⡀     ▌",
-			"▐  ⠠     ▌",
-			"▐   ⠂    ▌",
-			"▐   ⠈    ▌",
-			"▐    ⠂   ▌",
-			"▐    ⠠   ▌",
-			"▐     ⡀  ▌",
-			"▐     ⠠  ▌",
-			"▐      ⠂ ▌",
-			"▐      ⠈ ▌",
-			"▐       ⠂▌",
-			"▐       ⠠▌",
-			"▐       ⡀▌",
-			"▐      ⠠ ▌",
-			"▐      ⠂ ▌",
-			"▐     ⠈  ▌",
-			"▐     ⠂  ▌",
-			"▐    ⠠   ▌",
-			"▐    ⡀   ▌",
-			"▐   ⠠    ▌",
-			"▐   ⠂    ▌",
-			"▐  ⠈     ▌",
-			"▐  ⠂     ▌",
-			"▐ ⠠      ▌",
-			"▐ ⡀      ▌",
-			"▐⠠       ▌"
-		]
-	};
-	var shark = {
-		interval: 120,
-		frames: [
-			"▐|\\____________▌",
-			"▐_|\\___________▌",
-			"▐__|\\__________▌",
-			"▐___|\\_________▌",
-			"▐____|\\________▌",
-			"▐_____|\\_______▌",
-			"▐______|\\______▌",
-			"▐_______|\\_____▌",
-			"▐________|\\____▌",
-			"▐_________|\\___▌",
-			"▐__________|\\__▌",
-			"▐___________|\\_▌",
-			"▐____________|\\▌",
-			"▐____________/|▌",
-			"▐___________/|_▌",
-			"▐__________/|__▌",
-			"▐_________/|___▌",
-			"▐________/|____▌",
-			"▐_______/|_____▌",
-			"▐______/|______▌",
-			"▐_____/|_______▌",
-			"▐____/|________▌",
-			"▐___/|_________▌",
-			"▐__/|__________▌",
-			"▐_/|___________▌",
-			"▐/|____________▌"
-		]
-	};
-	var dqpb = {
-		interval: 100,
-		frames: [
-			"d",
-			"q",
-			"p",
-			"b"
-		]
-	};
-	var weather = {
-		interval: 100,
-		frames: [
-			"☀️ ",
-			"☀️ ",
-			"☀️ ",
-			"🌤 ",
-			"⛅️ ",
-			"🌥 ",
-			"☁️ ",
-			"🌧 ",
-			"🌨 ",
-			"🌧 ",
-			"🌨 ",
-			"🌧 ",
-			"🌨 ",
-			"⛈ ",
-			"🌨 ",
-			"🌧 ",
-			"🌨 ",
-			"☁️ ",
-			"🌥 ",
-			"⛅️ ",
-			"🌤 ",
-			"☀️ ",
-			"☀️ "
-		]
-	};
-	var christmas = {
-		interval: 400,
-		frames: [
-			"🌲",
-			"🎄"
-		]
-	};
-	var grenade = {
-		interval: 80,
-		frames: [
-			"،   ",
-			"′   ",
-			" ´ ",
-			" ‾ ",
-			"  ⸌",
-			"  ⸊",
-			"  |",
-			"  ⁎",
-			"  ⁕",
-			" ෴ ",
-			"  ⁓",
-			"   ",
-			"   ",
-			"   "
-		]
-	};
-	var point = {
-		interval: 125,
-		frames: [
-			"∙∙∙",
-			"●∙∙",
-			"∙●∙",
-			"∙∙●",
-			"∙∙∙"
-		]
-	};
-	var layer = {
-		interval: 150,
-		frames: [
-			"-",
-			"=",
-			"≡"
-		]
-	};
-	var betaWave = {
-		interval: 80,
-		frames: [
-			"ρββββββ",
-			"βρβββββ",
-			"ββρββββ",
-			"βββρβββ",
-			"ββββρββ",
-			"βββββρβ",
-			"ββββββρ"
-		]
-	};
-	var spinners = {
-		dots: dots,
-		dots2: dots2,
-		dots3: dots3,
-		dots4: dots4,
-		dots5: dots5,
-		dots6: dots6,
-		dots7: dots7,
-		dots8: dots8,
-		dots9: dots9,
-		dots10: dots10,
-		dots11: dots11,
-		dots12: dots12,
-		dots8Bit: dots8Bit,
-		line: line,
-		line2: line2,
-		pipe: pipe,
-		simpleDots: simpleDots,
-		simpleDotsScrolling: simpleDotsScrolling,
-		star: star,
-		star2: star2,
-		flip: flip,
-		hamburger: hamburger,
-		growVertical: growVertical,
-		growHorizontal: growHorizontal,
-		balloon: balloon,
-		balloon2: balloon2,
-		noise: noise,
-		bounce: bounce,
-		boxBounce: boxBounce,
-		boxBounce2: boxBounce2,
-		triangle: triangle,
-		arc: arc,
-		circle: circle,
-		squareCorners: squareCorners,
-		circleQuarters: circleQuarters,
-		circleHalves: circleHalves,
-		squish: squish,
-		toggle: toggle,
-		toggle2: toggle2,
-		toggle3: toggle3,
-		toggle4: toggle4,
-		toggle5: toggle5,
-		toggle6: toggle6,
-		toggle7: toggle7,
-		toggle8: toggle8,
-		toggle9: toggle9,
-		toggle10: toggle10,
-		toggle11: toggle11,
-		toggle12: toggle12,
-		toggle13: toggle13,
-		arrow: arrow,
-		arrow2: arrow2,
-		arrow3: arrow3,
-		bouncingBar: bouncingBar,
-		bouncingBall: bouncingBall,
-		smiley: smiley,
-		monkey: monkey,
-		hearts: hearts,
-		clock: clock,
-		earth: earth,
-		material: material,
-		moon: moon,
-		runner: runner,
-		pong: pong,
-		shark: shark,
-		dqpb: dqpb,
-		weather: weather,
-		christmas: christmas,
-		grenade: grenade,
-		point: point,
-		layer: layer,
-		betaWave: betaWave
-	};
-
-	var spinners$1 = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		dots: dots,
-		dots2: dots2,
-		dots3: dots3,
-		dots4: dots4,
-		dots5: dots5,
-		dots6: dots6,
-		dots7: dots7,
-		dots8: dots8,
-		dots9: dots9,
-		dots10: dots10,
-		dots11: dots11,
-		dots12: dots12,
-		dots8Bit: dots8Bit,
-		line: line,
-		line2: line2,
-		pipe: pipe,
-		simpleDots: simpleDots,
-		simpleDotsScrolling: simpleDotsScrolling,
-		star: star,
-		star2: star2,
-		flip: flip,
-		hamburger: hamburger,
-		growVertical: growVertical,
-		growHorizontal: growHorizontal,
-		balloon: balloon,
-		balloon2: balloon2,
-		noise: noise,
-		bounce: bounce,
-		boxBounce: boxBounce,
-		boxBounce2: boxBounce2,
-		triangle: triangle,
-		arc: arc,
-		circle: circle,
-		squareCorners: squareCorners,
-		circleQuarters: circleQuarters,
-		circleHalves: circleHalves,
-		squish: squish,
-		toggle: toggle,
-		toggle2: toggle2,
-		toggle3: toggle3,
-		toggle4: toggle4,
-		toggle5: toggle5,
-		toggle6: toggle6,
-		toggle7: toggle7,
-		toggle8: toggle8,
-		toggle9: toggle9,
-		toggle10: toggle10,
-		toggle11: toggle11,
-		toggle12: toggle12,
-		toggle13: toggle13,
-		arrow: arrow,
-		arrow2: arrow2,
-		arrow3: arrow3,
-		bouncingBar: bouncingBar,
-		bouncingBall: bouncingBall,
-		smiley: smiley,
-		monkey: monkey,
-		hearts: hearts,
-		clock: clock,
-		earth: earth,
-		material: material,
-		moon: moon,
-		runner: runner,
-		pong: pong,
-		shark: shark,
-		dqpb: dqpb,
-		weather: weather,
-		christmas: christmas,
-		grenade: grenade,
-		point: point,
-		layer: layer,
-		betaWave: betaWave,
-		'default': spinners
-	});
-
-	var require$$0 = getCjsExportFromNamespace(spinners$1);
-
-	const spinners$2 = Object.assign({}, require$$0);
-
-	const spinnersList = Object.keys(spinners$2);
-
-	Object.defineProperty(spinners$2, 'random', {
-		get() {
-			const randomIndex = Math.floor(Math.random() * spinnersList.length);
-			const spinnerName = spinnersList[randomIndex];
-			return spinners$2[spinnerName];
-		}
-	});
-
-	var cliSpinners = spinners$2;
-	// TODO: Remove this for the next major release
-	var _default$8 = spinners$2;
-	cliSpinners.default = _default$8;
-
-	const stringReplaceAll$4 = (string, substring, replacer) => {
-		let index = string.indexOf(substring);
-		if (index === -1) {
-			return string;
-		}
-
-		const substringLength = substring.length;
-		let endIndex = 0;
-		let returnValue = '';
-		do {
-			returnValue += string.substr(endIndex, index - endIndex) + substring + replacer;
-			endIndex = index + substringLength;
-			index = string.indexOf(substring, endIndex);
-		} while (index !== -1);
-
-		returnValue += string.substr(endIndex);
-		return returnValue;
-	};
-
-	const stringEncaseCRLFWithFirstIndex$4 = (string, prefix, postfix, index) => {
-		let endIndex = 0;
-		let returnValue = '';
-		do {
-			const gotCR = string[index - 1] === '\r';
-			returnValue += string.substr(endIndex, (gotCR ? index - 1 : index) - endIndex) + prefix + (gotCR ? '\r\n' : '\n') + postfix;
-			endIndex = index + 1;
-			index = string.indexOf('\n', endIndex);
-		} while (index !== -1);
-
-		returnValue += string.substr(endIndex);
-		return returnValue;
-	};
-
-	var util$2 = {
-		stringReplaceAll: stringReplaceAll$4,
-		stringEncaseCRLFWithFirstIndex: stringEncaseCRLFWithFirstIndex$4
-	};
-
-	const TEMPLATE_REGEX$2 = /(?:\\(u(?:[a-f\d]{4}|\{[a-f\d]{1,6}\})|x[a-f\d]{2}|.))|(?:\{(~)?(\w+(?:\([^)]*\))?(?:\.\w+(?:\([^)]*\))?)*)(?:[ \t]|(?=\r?\n)))|(\})|((?:.|[\r\n\f])+?)/gi;
-	const STYLE_REGEX$2 = /(?:^|\.)(\w+)(?:\(([^)]*)\))?/g;
-	const STRING_REGEX$2 = /^(['"])((?:\\.|(?!\1)[^\\])*)\1$/;
-	const ESCAPE_REGEX$2 = /\\(u(?:[a-f\d]{4}|{[a-f\d]{1,6}})|x[a-f\d]{2}|.)|([^\\])/gi;
-
-	const ESCAPES$2 = new Map([
-		['n', '\n'],
-		['r', '\r'],
-		['t', '\t'],
-		['b', '\b'],
-		['f', '\f'],
-		['v', '\v'],
-		['0', '\0'],
-		['\\', '\\'],
-		['e', '\u001B'],
-		['a', '\u0007']
-	]);
-
-	function unescape$2(c) {
-		const u = c[0] === 'u';
-		const bracket = c[1] === '{';
-
-		if ((u && !bracket && c.length === 5) || (c[0] === 'x' && c.length === 3)) {
-			return String.fromCharCode(parseInt(c.slice(1), 16));
-		}
-
-		if (u && bracket) {
-			return String.fromCodePoint(parseInt(c.slice(2, -1), 16));
-		}
-
-		return ESCAPES$2.get(c) || c;
-	}
-
-	function parseArguments$2(name, arguments_) {
-		const results = [];
-		const chunks = arguments_.trim().split(/\s*,\s*/g);
-		let matches;
-
-		for (const chunk of chunks) {
-			const number = Number(chunk);
-			if (!Number.isNaN(number)) {
-				results.push(number);
-			} else if ((matches = chunk.match(STRING_REGEX$2))) {
-				results.push(matches[2].replace(ESCAPE_REGEX$2, (m, escape, character) => escape ? unescape$2(escape) : character));
-			} else {
-				throw new Error(`Invalid Chalk template style argument: ${chunk} (in style '${name}')`);
-			}
-		}
-
-		return results;
-	}
-
-	function parseStyle$2(style) {
-		STYLE_REGEX$2.lastIndex = 0;
-
-		const results = [];
-		let matches;
-
-		while ((matches = STYLE_REGEX$2.exec(style)) !== null) {
-			const name = matches[1];
-
-			if (matches[2]) {
-				const args = parseArguments$2(name, matches[2]);
-				results.push([name].concat(args));
-			} else {
-				results.push([name]);
-			}
-		}
-
-		return results;
-	}
-
-	function buildStyle$2(chalk, styles) {
-		const enabled = {};
-
-		for (const layer of styles) {
-			for (const style of layer.styles) {
-				enabled[style[0]] = layer.inverse ? null : style.slice(1);
-			}
-		}
-
-		let current = chalk;
-		for (const [styleName, styles] of Object.entries(enabled)) {
-			if (!Array.isArray(styles)) {
-				continue;
-			}
-
-			if (!(styleName in current)) {
-				throw new Error(`Unknown Chalk style: ${styleName}`);
-			}
-
-			current = styles.length > 0 ? current[styleName](...styles) : current[styleName];
-		}
-
-		return current;
-	}
-
-	var templates$2 = (chalk, temporary) => {
-		const styles = [];
-		const chunks = [];
-		let chunk = [];
-
-		// eslint-disable-next-line max-params
-		temporary.replace(TEMPLATE_REGEX$2, (m, escapeCharacter, inverse, style, close, character) => {
-			if (escapeCharacter) {
-				chunk.push(unescape$2(escapeCharacter));
-			} else if (style) {
-				const string = chunk.join('');
-				chunk = [];
-				chunks.push(styles.length === 0 ? string : buildStyle$2(chalk, styles)(string));
-				styles.push({inverse, styles: parseStyle$2(style)});
-			} else if (close) {
-				if (styles.length === 0) {
-					throw new Error('Found extraneous } in Chalk template literal');
-				}
-
-				chunks.push(buildStyle$2(chalk, styles)(chunk.join('')));
-				chunk = [];
-				styles.pop();
-			} else {
-				chunk.push(character);
-			}
-		});
-
-		chunks.push(chunk.join(''));
-
-		if (styles.length > 0) {
-			const errMessage = `Chalk template literal is missing ${styles.length} closing bracket${styles.length === 1 ? '' : 's'} (\`}\`)`;
-			throw new Error(errMessage);
-		}
-
-		return chunks.join('');
-	};
-
-	const {stdout: stdoutColor$2, stderr: stderrColor$2} = supportsColor_1;
-	const {
-		stringReplaceAll: stringReplaceAll$5,
-		stringEncaseCRLFWithFirstIndex: stringEncaseCRLFWithFirstIndex$5
-	} = util$2;
-
-	const {isArray: isArray$1} = Array;
-
-	// `supportsColor.level` → `ansiStyles.color[name]` mapping
-	const levelMapping$2 = [
-		'ansi',
-		'ansi',
-		'ansi256',
-		'ansi16m'
-	];
-
-	const styles$2 = Object.create(null);
-
-	const applyOptions$2 = (object, options = {}) => {
-		if (options.level && !(Number.isInteger(options.level) && options.level >= 0 && options.level <= 3)) {
-			throw new Error('The `level` option should be an integer from 0 to 3');
-		}
-
-		// Detect level if not set manually
-		const colorLevel = stdoutColor$2 ? stdoutColor$2.level : 0;
-		object.level = options.level === undefined ? colorLevel : options.level;
-	};
-
-	class ChalkClass$2 {
-		constructor(options) {
-			// eslint-disable-next-line no-constructor-return
-			return chalkFactory$2(options);
-		}
-	}
-
-	const chalkFactory$2 = options => {
-		const chalk = {};
-		applyOptions$2(chalk, options);
-
-		chalk.template = (...arguments_) => chalkTag$2(chalk.template, ...arguments_);
-
-		Object.setPrototypeOf(chalk, Chalk$2.prototype);
-		Object.setPrototypeOf(chalk.template, chalk);
-
-		chalk.template.constructor = () => {
-			throw new Error('`chalk.constructor()` is deprecated. Use `new chalk.Instance()` instead.');
-		};
-
-		chalk.template.Instance = ChalkClass$2;
-
-		return chalk.template;
-	};
-
-	function Chalk$2(options) {
-		return chalkFactory$2(options);
-	}
-
-	for (const [styleName, style] of Object.entries(ansiStyles)) {
-		styles$2[styleName] = {
-			get() {
-				const builder = createBuilder$2(this, createStyler$2(style.open, style.close, this._styler), this._isEmpty);
-				Object.defineProperty(this, styleName, {value: builder});
-				return builder;
-			}
-		};
-	}
-
-	styles$2.visible = {
-		get() {
-			const builder = createBuilder$2(this, this._styler, true);
-			Object.defineProperty(this, 'visible', {value: builder});
-			return builder;
-		}
-	};
-
-	const usedModels$2 = ['rgb', 'hex', 'keyword', 'hsl', 'hsv', 'hwb', 'ansi', 'ansi256'];
-
-	for (const model of usedModels$2) {
-		styles$2[model] = {
-			get() {
-				const {level} = this;
-				return function (...arguments_) {
-					const styler = createStyler$2(ansiStyles.color[levelMapping$2[level]][model](...arguments_), ansiStyles.color.close, this._styler);
-					return createBuilder$2(this, styler, this._isEmpty);
-				};
-			}
-		};
-	}
-
-	for (const model of usedModels$2) {
-		const bgModel = 'bg' + model[0].toUpperCase() + model.slice(1);
-		styles$2[bgModel] = {
-			get() {
-				const {level} = this;
-				return function (...arguments_) {
-					const styler = createStyler$2(ansiStyles.bgColor[levelMapping$2[level]][model](...arguments_), ansiStyles.bgColor.close, this._styler);
-					return createBuilder$2(this, styler, this._isEmpty);
-				};
-			}
-		};
-	}
-
-	const proto$2 = Object.defineProperties(() => {}, {
-		...styles$2,
-		level: {
-			enumerable: true,
-			get() {
-				return this._generator.level;
-			},
-			set(level) {
-				this._generator.level = level;
-			}
-		}
-	});
-
-	const createStyler$2 = (open, close, parent) => {
-		let openAll;
-		let closeAll;
-		if (parent === undefined) {
-			openAll = open;
-			closeAll = close;
-		} else {
-			openAll = parent.openAll + open;
-			closeAll = close + parent.closeAll;
-		}
-
-		return {
-			open,
-			close,
-			openAll,
-			closeAll,
-			parent
-		};
-	};
-
-	const createBuilder$2 = (self, _styler, _isEmpty) => {
-		const builder = (...arguments_) => {
-			if (isArray$1(arguments_[0]) && isArray$1(arguments_[0].raw)) {
-				// Called as a template literal, for example: chalk.red`2 + 3 = {bold ${2+3}}`
-				return applyStyle$2(builder, chalkTag$2(builder, ...arguments_));
-			}
-
-			// Single argument is hot path, implicit coercion is faster than anything
-			// eslint-disable-next-line no-implicit-coercion
-			return applyStyle$2(builder, (arguments_.length === 1) ? ('' + arguments_[0]) : arguments_.join(' '));
-		};
-
-		// We alter the prototype because we must return a function, but there is
-		// no way to create a function with a different prototype
-		Object.setPrototypeOf(builder, proto$2);
-
-		builder._generator = self;
-		builder._styler = _styler;
-		builder._isEmpty = _isEmpty;
-
-		return builder;
-	};
-
-	const applyStyle$2 = (self, string) => {
-		if (self.level <= 0 || !string) {
-			return self._isEmpty ? '' : string;
-		}
-
-		let styler = self._styler;
-
-		if (styler === undefined) {
-			return string;
-		}
-
-		const {openAll, closeAll} = styler;
-		if (string.indexOf('\u001B') !== -1) {
-			while (styler !== undefined) {
-				// Replace any instances already present with a re-opening code
-				// otherwise only the part of the string until said closing code
-				// will be colored, and the rest will simply be 'plain'.
-				string = stringReplaceAll$5(string, styler.close, styler.open);
-
-				styler = styler.parent;
-			}
-		}
-
-		// We can move both next actions out of loop, because remaining actions in loop won't have
-		// any/visible effect on parts we add here. Close the styling before a linebreak and reopen
-		// after next line to fix a bleed issue on macOS: https://github.com/chalk/chalk/pull/92
-		const lfIndex = string.indexOf('\n');
-		if (lfIndex !== -1) {
-			string = stringEncaseCRLFWithFirstIndex$5(string, closeAll, openAll, lfIndex);
-		}
-
-		return openAll + string + closeAll;
-	};
-
-	let template$2;
-	const chalkTag$2 = (chalk, ...strings) => {
-		const [firstString] = strings;
-
-		if (!isArray$1(firstString) || !isArray$1(firstString.raw)) {
-			// If chalk() was called by itself or with a string,
-			// return the string itself as a string.
-			return strings.join(' ');
-		}
-
-		const arguments_ = strings.slice(1);
-		const parts = [firstString.raw[0]];
-
-		for (let i = 1; i < firstString.length; i++) {
-			parts.push(
-				String(arguments_[i - 1]).replace(/[{}\\]/g, '\\$&'),
-				String(firstString.raw[i])
-			);
-		}
-
-		if (template$2 === undefined) {
-			template$2 = templates$2;
-		}
-
-		return template$2(chalk, parts.join(''));
-	};
-
-	Object.defineProperties(Chalk$2.prototype, styles$2);
-
-	const chalk$2 = Chalk$2(); // eslint-disable-line new-cap
-	chalk$2.supportsColor = stdoutColor$2;
-	chalk$2.stderr = Chalk$2({level: stderrColor$2 ? stderrColor$2.level : 0}); // eslint-disable-line new-cap
-	chalk$2.stderr.supportsColor = stderrColor$2;
-
-	var source$2 = chalk$2;
-
-	const isSupported = process.platform !== 'win32' || process.env.CI || process.env.TERM === 'xterm-256color';
-
-	const main = {
-		info: source$2.blue('ℹ'),
-		success: source$2.green('✔'),
-		warning: source$2.yellow('⚠'),
-		error: source$2.red('✖')
-	};
-
-	const fallbacks = {
-		info: source$2.blue('i'),
-		success: source$2.green('√'),
-		warning: source$2.yellow('‼'),
-		error: source$2.red('×')
-	};
-
-	var logSymbols = isSupported ? main : fallbacks;
-
-	var ansiRegex$2 = ({onlyFirst = false} = {}) => {
-		const pattern = [
-			'[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
-			'(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))'
-		].join('|');
-
-		return new RegExp(pattern, onlyFirst ? undefined : 'g');
-	};
-
-	var stripAnsi$2 = string => typeof string === 'string' ? string.replace(ansiRegex$2(), '') : string;
-
-	var clone_1 = createCommonjsModule(function (module) {
-	var clone = (function() {
-
-	/**
-	 * Clones (copies) an Object using deep copying.
-	 *
-	 * This function supports circular references by default, but if you are certain
-	 * there are no circular references in your object, you can save some CPU time
-	 * by calling clone(obj, false).
-	 *
-	 * Caution: if `circular` is false and `parent` contains circular references,
-	 * your program may enter an infinite loop and crash.
-	 *
-	 * @param `parent` - the object to be cloned
-	 * @param `circular` - set to true if the object to be cloned may contain
-	 *    circular references. (optional - true by default)
-	 * @param `depth` - set to a number if the object is only to be cloned to
-	 *    a particular depth. (optional - defaults to Infinity)
-	 * @param `prototype` - sets the prototype to be used when cloning an object.
-	 *    (optional - defaults to parent prototype).
-	*/
-	function clone(parent, circular, depth, prototype) {
-	  var filter;
-	  if (typeof circular === 'object') {
-	    depth = circular.depth;
-	    prototype = circular.prototype;
-	    filter = circular.filter;
-	    circular = circular.circular;
-	  }
-	  // maintain two arrays for circular references, where corresponding parents
-	  // and children have the same index
-	  var allParents = [];
-	  var allChildren = [];
-
-	  var useBuffer = typeof Buffer != 'undefined';
-
-	  if (typeof circular == 'undefined')
-	    circular = true;
-
-	  if (typeof depth == 'undefined')
-	    depth = Infinity;
-
-	  // recurse this function so we don't reset allParents and allChildren
-	  function _clone(parent, depth) {
-	    // cloning null always returns null
-	    if (parent === null)
-	      return null;
-
-	    if (depth == 0)
-	      return parent;
-
-	    var child;
-	    var proto;
-	    if (typeof parent != 'object') {
-	      return parent;
-	    }
-
-	    if (clone.__isArray(parent)) {
-	      child = [];
-	    } else if (clone.__isRegExp(parent)) {
-	      child = new RegExp(parent.source, __getRegExpFlags(parent));
-	      if (parent.lastIndex) child.lastIndex = parent.lastIndex;
-	    } else if (clone.__isDate(parent)) {
-	      child = new Date(parent.getTime());
-	    } else if (useBuffer && Buffer.isBuffer(parent)) {
-	      if (Buffer.allocUnsafe) {
-	        // Node.js >= 4.5.0
-	        child = Buffer.allocUnsafe(parent.length);
-	      } else {
-	        // Older Node.js versions
-	        child = new Buffer(parent.length);
-	      }
-	      parent.copy(child);
-	      return child;
-	    } else {
-	      if (typeof prototype == 'undefined') {
-	        proto = Object.getPrototypeOf(parent);
-	        child = Object.create(proto);
-	      }
-	      else {
-	        child = Object.create(prototype);
-	        proto = prototype;
-	      }
-	    }
-
-	    if (circular) {
-	      var index = allParents.indexOf(parent);
-
-	      if (index != -1) {
-	        return allChildren[index];
-	      }
-	      allParents.push(parent);
-	      allChildren.push(child);
-	    }
-
-	    for (var i in parent) {
-	      var attrs;
-	      if (proto) {
-	        attrs = Object.getOwnPropertyDescriptor(proto, i);
-	      }
-
-	      if (attrs && attrs.set == null) {
-	        continue;
-	      }
-	      child[i] = _clone(parent[i], depth - 1);
-	    }
-
-	    return child;
-	  }
-
-	  return _clone(parent, depth);
-	}
-
-	/**
-	 * Simple flat clone using prototype, accepts only objects, usefull for property
-	 * override on FLAT configuration object (no nested props).
-	 *
-	 * USE WITH CAUTION! This may not behave as you wish if you do not know how this
-	 * works.
-	 */
-	clone.clonePrototype = function clonePrototype(parent) {
-	  if (parent === null)
-	    return null;
-
-	  var c = function () {};
-	  c.prototype = parent;
-	  return new c();
-	};
-
-	// private utility functions
-
-	function __objToStr(o) {
-	  return Object.prototype.toString.call(o);
-	}clone.__objToStr = __objToStr;
-
-	function __isDate(o) {
-	  return typeof o === 'object' && __objToStr(o) === '[object Date]';
-	}clone.__isDate = __isDate;
-
-	function __isArray(o) {
-	  return typeof o === 'object' && __objToStr(o) === '[object Array]';
-	}clone.__isArray = __isArray;
-
-	function __isRegExp(o) {
-	  return typeof o === 'object' && __objToStr(o) === '[object RegExp]';
-	}clone.__isRegExp = __isRegExp;
-
-	function __getRegExpFlags(re) {
-	  var flags = '';
-	  if (re.global) flags += 'g';
-	  if (re.ignoreCase) flags += 'i';
-	  if (re.multiline) flags += 'm';
-	  return flags;
-	}clone.__getRegExpFlags = __getRegExpFlags;
-
-	return clone;
-	})();
-
-	if ( module.exports) {
-	  module.exports = clone;
-	}
-	});
-
-	var defaults = function(options, defaults) {
-	  options = options || {};
-
-	  Object.keys(defaults).forEach(function(key) {
-	    if (typeof options[key] === 'undefined') {
-	      options[key] = clone_1(defaults[key]);
-	    }
-	  });
-
-	  return options;
-	};
-
-	var combining = [
-	    [ 0x0300, 0x036F ], [ 0x0483, 0x0486 ], [ 0x0488, 0x0489 ],
-	    [ 0x0591, 0x05BD ], [ 0x05BF, 0x05BF ], [ 0x05C1, 0x05C2 ],
-	    [ 0x05C4, 0x05C5 ], [ 0x05C7, 0x05C7 ], [ 0x0600, 0x0603 ],
-	    [ 0x0610, 0x0615 ], [ 0x064B, 0x065E ], [ 0x0670, 0x0670 ],
-	    [ 0x06D6, 0x06E4 ], [ 0x06E7, 0x06E8 ], [ 0x06EA, 0x06ED ],
-	    [ 0x070F, 0x070F ], [ 0x0711, 0x0711 ], [ 0x0730, 0x074A ],
-	    [ 0x07A6, 0x07B0 ], [ 0x07EB, 0x07F3 ], [ 0x0901, 0x0902 ],
-	    [ 0x093C, 0x093C ], [ 0x0941, 0x0948 ], [ 0x094D, 0x094D ],
-	    [ 0x0951, 0x0954 ], [ 0x0962, 0x0963 ], [ 0x0981, 0x0981 ],
-	    [ 0x09BC, 0x09BC ], [ 0x09C1, 0x09C4 ], [ 0x09CD, 0x09CD ],
-	    [ 0x09E2, 0x09E3 ], [ 0x0A01, 0x0A02 ], [ 0x0A3C, 0x0A3C ],
-	    [ 0x0A41, 0x0A42 ], [ 0x0A47, 0x0A48 ], [ 0x0A4B, 0x0A4D ],
-	    [ 0x0A70, 0x0A71 ], [ 0x0A81, 0x0A82 ], [ 0x0ABC, 0x0ABC ],
-	    [ 0x0AC1, 0x0AC5 ], [ 0x0AC7, 0x0AC8 ], [ 0x0ACD, 0x0ACD ],
-	    [ 0x0AE2, 0x0AE3 ], [ 0x0B01, 0x0B01 ], [ 0x0B3C, 0x0B3C ],
-	    [ 0x0B3F, 0x0B3F ], [ 0x0B41, 0x0B43 ], [ 0x0B4D, 0x0B4D ],
-	    [ 0x0B56, 0x0B56 ], [ 0x0B82, 0x0B82 ], [ 0x0BC0, 0x0BC0 ],
-	    [ 0x0BCD, 0x0BCD ], [ 0x0C3E, 0x0C40 ], [ 0x0C46, 0x0C48 ],
-	    [ 0x0C4A, 0x0C4D ], [ 0x0C55, 0x0C56 ], [ 0x0CBC, 0x0CBC ],
-	    [ 0x0CBF, 0x0CBF ], [ 0x0CC6, 0x0CC6 ], [ 0x0CCC, 0x0CCD ],
-	    [ 0x0CE2, 0x0CE3 ], [ 0x0D41, 0x0D43 ], [ 0x0D4D, 0x0D4D ],
-	    [ 0x0DCA, 0x0DCA ], [ 0x0DD2, 0x0DD4 ], [ 0x0DD6, 0x0DD6 ],
-	    [ 0x0E31, 0x0E31 ], [ 0x0E34, 0x0E3A ], [ 0x0E47, 0x0E4E ],
-	    [ 0x0EB1, 0x0EB1 ], [ 0x0EB4, 0x0EB9 ], [ 0x0EBB, 0x0EBC ],
-	    [ 0x0EC8, 0x0ECD ], [ 0x0F18, 0x0F19 ], [ 0x0F35, 0x0F35 ],
-	    [ 0x0F37, 0x0F37 ], [ 0x0F39, 0x0F39 ], [ 0x0F71, 0x0F7E ],
-	    [ 0x0F80, 0x0F84 ], [ 0x0F86, 0x0F87 ], [ 0x0F90, 0x0F97 ],
-	    [ 0x0F99, 0x0FBC ], [ 0x0FC6, 0x0FC6 ], [ 0x102D, 0x1030 ],
-	    [ 0x1032, 0x1032 ], [ 0x1036, 0x1037 ], [ 0x1039, 0x1039 ],
-	    [ 0x1058, 0x1059 ], [ 0x1160, 0x11FF ], [ 0x135F, 0x135F ],
-	    [ 0x1712, 0x1714 ], [ 0x1732, 0x1734 ], [ 0x1752, 0x1753 ],
-	    [ 0x1772, 0x1773 ], [ 0x17B4, 0x17B5 ], [ 0x17B7, 0x17BD ],
-	    [ 0x17C6, 0x17C6 ], [ 0x17C9, 0x17D3 ], [ 0x17DD, 0x17DD ],
-	    [ 0x180B, 0x180D ], [ 0x18A9, 0x18A9 ], [ 0x1920, 0x1922 ],
-	    [ 0x1927, 0x1928 ], [ 0x1932, 0x1932 ], [ 0x1939, 0x193B ],
-	    [ 0x1A17, 0x1A18 ], [ 0x1B00, 0x1B03 ], [ 0x1B34, 0x1B34 ],
-	    [ 0x1B36, 0x1B3A ], [ 0x1B3C, 0x1B3C ], [ 0x1B42, 0x1B42 ],
-	    [ 0x1B6B, 0x1B73 ], [ 0x1DC0, 0x1DCA ], [ 0x1DFE, 0x1DFF ],
-	    [ 0x200B, 0x200F ], [ 0x202A, 0x202E ], [ 0x2060, 0x2063 ],
-	    [ 0x206A, 0x206F ], [ 0x20D0, 0x20EF ], [ 0x302A, 0x302F ],
-	    [ 0x3099, 0x309A ], [ 0xA806, 0xA806 ], [ 0xA80B, 0xA80B ],
-	    [ 0xA825, 0xA826 ], [ 0xFB1E, 0xFB1E ], [ 0xFE00, 0xFE0F ],
-	    [ 0xFE20, 0xFE23 ], [ 0xFEFF, 0xFEFF ], [ 0xFFF9, 0xFFFB ],
-	    [ 0x10A01, 0x10A03 ], [ 0x10A05, 0x10A06 ], [ 0x10A0C, 0x10A0F ],
-	    [ 0x10A38, 0x10A3A ], [ 0x10A3F, 0x10A3F ], [ 0x1D167, 0x1D169 ],
-	    [ 0x1D173, 0x1D182 ], [ 0x1D185, 0x1D18B ], [ 0x1D1AA, 0x1D1AD ],
-	    [ 0x1D242, 0x1D244 ], [ 0xE0001, 0xE0001 ], [ 0xE0020, 0xE007F ],
-	    [ 0xE0100, 0xE01EF ]
-	];
-
-	var DEFAULTS = {
-	  nul: 0,
-	  control: 0
-	};
-
-	var wcwidth_1 = function wcwidth(str) {
-	  return wcswidth(str, DEFAULTS)
-	};
-
-	var config = function(opts) {
-	  opts = defaults(opts || {}, DEFAULTS);
-	  return function wcwidth(str) {
-	    return wcswidth(str, opts)
-	  }
-	};
-
-	/*
-	 *  The following functions define the column width of an ISO 10646
-	 *  character as follows:
-	 *  - The null character (U+0000) has a column width of 0.
-	 *  - Other C0/C1 control characters and DEL will lead to a return value
-	 *    of -1.
-	 *  - Non-spacing and enclosing combining characters (general category
-	 *    code Mn or Me in the
-	 *    Unicode database) have a column width of 0.
-	 *  - SOFT HYPHEN (U+00AD) has a column width of 1.
-	 *  - Other format characters (general category code Cf in the Unicode
-	 *    database) and ZERO WIDTH
-	 *    SPACE (U+200B) have a column width of 0.
-	 *  - Hangul Jamo medial vowels and final consonants (U+1160-U+11FF)
-	 *    have a column width of 0.
-	 *  - Spacing characters in the East Asian Wide (W) or East Asian
-	 *    Full-width (F) category as
-	 *    defined in Unicode Technical Report #11 have a column width of 2.
-	 *  - All remaining characters (including all printable ISO 8859-1 and
-	 *    WGL4 characters, Unicode control characters, etc.) have a column
-	 *    width of 1.
-	 *  This implementation assumes that characters are encoded in ISO 10646.
-	*/
-
-	function wcswidth(str, opts) {
-	  if (typeof str !== 'string') return wcwidth(str, opts)
-
-	  var s = 0;
-	  for (var i = 0; i < str.length; i++) {
-	    var n = wcwidth(str.charCodeAt(i), opts);
-	    if (n < 0) return -1
-	    s += n;
-	  }
-
-	  return s
-	}
-
-	function wcwidth(ucs, opts) {
-	  // test for 8-bit control characters
-	  if (ucs === 0) return opts.nul
-	  if (ucs < 32 || (ucs >= 0x7f && ucs < 0xa0)) return opts.control
-
-	  // binary search in table of non-spacing characters
-	  if (bisearch(ucs)) return 0
-
-	  // if we arrive here, ucs is not a combining or C0/C1 control character
-	  return 1 +
-	      (ucs >= 0x1100 &&
-	       (ucs <= 0x115f ||                       // Hangul Jamo init. consonants
-	        ucs == 0x2329 || ucs == 0x232a ||
-	        (ucs >= 0x2e80 && ucs <= 0xa4cf &&
-	         ucs != 0x303f) ||                     // CJK ... Yi
-	        (ucs >= 0xac00 && ucs <= 0xd7a3) ||    // Hangul Syllables
-	        (ucs >= 0xf900 && ucs <= 0xfaff) ||    // CJK Compatibility Ideographs
-	        (ucs >= 0xfe10 && ucs <= 0xfe19) ||    // Vertical forms
-	        (ucs >= 0xfe30 && ucs <= 0xfe6f) ||    // CJK Compatibility Forms
-	        (ucs >= 0xff00 && ucs <= 0xff60) ||    // Fullwidth Forms
-	        (ucs >= 0xffe0 && ucs <= 0xffe6) ||
-	        (ucs >= 0x20000 && ucs <= 0x2fffd) ||
-	        (ucs >= 0x30000 && ucs <= 0x3fffd)));
-	}
-
-	function bisearch(ucs) {
-	  var min = 0;
-	  var max = combining.length - 1;
-	  var mid;
-
-	  if (ucs < combining[0][0] || ucs > combining[max][1]) return false
-
-	  while (max >= min) {
-	    mid = Math.floor((min + max) / 2);
-	    if (ucs > combining[mid][1]) min = mid + 1;
-	    else if (ucs < combining[mid][0]) max = mid - 1;
-	    else return true
-	  }
-
-	  return false
-	}
-	wcwidth_1.config = config;
-
-	var isInteractive = ({stream = process.stdout} = {}) => {
-		return Boolean(
-			stream && stream.isTTY &&
-			process.env.TERM !== 'dumb' &&
-			!('CI' in process.env)
-		);
-	};
-
-	var mute = MuteStream;
-
-	// var out = new MuteStream(process.stdout)
-	// argument auto-pipes
-	function MuteStream (opts) {
-	  stream$1.apply(this);
-	  opts = opts || {};
-	  this.writable = this.readable = true;
-	  this.muted = false;
-	  this.on('pipe', this._onpipe);
-	  this.replace = opts.replace;
-
-	  // For readline-type situations
-	  // This much at the start of a line being redrawn after a ctrl char
-	  // is seen (such as backspace) won't be redrawn as the replacement
-	  this._prompt = opts.prompt || null;
-	  this._hadControl = false;
-	}
-
-	MuteStream.prototype = Object.create(stream$1.prototype);
-
-	Object.defineProperty(MuteStream.prototype, 'constructor', {
-	  value: MuteStream,
-	  enumerable: false
-	});
-
-	MuteStream.prototype.mute = function () {
-	  this.muted = true;
-	};
-
-	MuteStream.prototype.unmute = function () {
-	  this.muted = false;
-	};
-
-	Object.defineProperty(MuteStream.prototype, '_onpipe', {
-	  value: onPipe,
-	  enumerable: false,
-	  writable: true,
-	  configurable: true
-	});
-
-	function onPipe (src) {
-	  this._src = src;
-	}
-
-	Object.defineProperty(MuteStream.prototype, 'isTTY', {
-	  get: getIsTTY,
-	  set: setIsTTY,
-	  enumerable: true,
-	  configurable: true
-	});
-
-	function getIsTTY () {
-	  return( (this._dest) ? this._dest.isTTY
-	        : (this._src) ? this._src.isTTY
-	        : false
-	        )
-	}
-
-	// basically just get replace the getter/setter with a regular value
-	function setIsTTY (isTTY) {
-	  Object.defineProperty(this, 'isTTY', {
-	    value: isTTY,
-	    enumerable: true,
-	    writable: true,
-	    configurable: true
-	  });
-	}
-
-	Object.defineProperty(MuteStream.prototype, 'rows', {
-	  get: function () {
-	    return( this._dest ? this._dest.rows
-	          : this._src ? this._src.rows
-	          : undefined )
-	  }, enumerable: true, configurable: true });
-
-	Object.defineProperty(MuteStream.prototype, 'columns', {
-	  get: function () {
-	    return( this._dest ? this._dest.columns
-	          : this._src ? this._src.columns
-	          : undefined )
-	  }, enumerable: true, configurable: true });
-
-
-	MuteStream.prototype.pipe = function (dest, options) {
-	  this._dest = dest;
-	  return stream$1.prototype.pipe.call(this, dest, options)
-	};
-
-	MuteStream.prototype.pause = function () {
-	  if (this._src) return this._src.pause()
-	};
-
-	MuteStream.prototype.resume = function () {
-	  if (this._src) return this._src.resume()
-	};
-
-	MuteStream.prototype.write = function (c) {
-	  if (this.muted) {
-	    if (!this.replace) return true
-	    if (c.match(/^\u001b/)) {
-	      if(c.indexOf(this._prompt) === 0) {
-	        c = c.substr(this._prompt.length);
-	        c = c.replace(/./g, this.replace);
-	        c = this._prompt + c;
-	      }
-	      this._hadControl = true;
-	      return this.emit('data', c)
-	    } else {
-	      if (this._prompt && this._hadControl &&
-	          c.indexOf(this._prompt) === 0) {
-	        this._hadControl = false;
-	        this.emit('data', this._prompt);
-	        c = c.substr(this._prompt.length);
-	      }
-	      c = c.toString().replace(/./g, this.replace);
-	    }
-	  }
-	  this.emit('data', c);
-	};
-
-	MuteStream.prototype.end = function (c) {
-	  if (this.muted) {
-	    if (c && this.replace) {
-	      c = c.toString().replace(/./g, this.replace);
-	    } else {
-	      c = null;
-	    }
-	  }
-	  if (c) this.emit('data', c);
-	  this.emit('end');
-	};
-
-	function proxy (fn) { return function () {
-	  var d = this._dest;
-	  var s = this._src;
-	  if (d && d[fn]) d[fn].apply(d, arguments);
-	  if (s && s[fn]) s[fn].apply(s, arguments);
-	}}
-
-	MuteStream.prototype.destroy = proxy('destroy');
-	MuteStream.prototype.destroySoon = proxy('destroySoon');
-	MuteStream.prototype.close = proxy('close');
-
-	const TEXT = Symbol('text');
-	const PREFIX_TEXT = Symbol('prefixText');
-
-	const ASCII_ETX_CODE = 0x03; // Ctrl+C emits this code
-
-	class StdinDiscarder {
-		constructor() {
-			this.requests = 0;
-
-			this.mutedStream = new mute();
-			this.mutedStream.pipe(process.stdout);
-			this.mutedStream.mute();
-
-			const self = this;
-			this.ourEmit = function (event, data, ...args) {
-				const {stdin} = process;
-				if (self.requests > 0 || stdin.emit === self.ourEmit) {
-					if (event === 'keypress') { // Fixes readline behavior
-						return;
-					}
-
-					if (event === 'data' && data.includes(ASCII_ETX_CODE)) {
-						process.emit('SIGINT');
-					}
-
-					Reflect.apply(self.oldEmit, this, [event, data, ...args]);
-				} else {
-					Reflect.apply(process.stdin.emit, this, [event, data, ...args]);
-				}
-			};
-		}
-
-		start() {
-			this.requests++;
-
-			if (this.requests === 1) {
-				this.realStart();
-			}
-		}
-
-		stop() {
-			if (this.requests <= 0) {
-				throw new Error('`stop` called more times than `start`');
-			}
-
-			this.requests--;
-
-			if (this.requests === 0) {
-				this.realStop();
-			}
-		}
-
-		realStart() {
-			// No known way to make it work reliably on Windows
-			if (process.platform === 'win32') {
-				return;
-			}
-
-			this.rl = readline.createInterface({
-				input: process.stdin,
-				output: this.mutedStream
-			});
-
-			this.rl.on('SIGINT', () => {
-				if (process.listenerCount('SIGINT') === 0) {
-					process.emit('SIGINT');
-				} else {
-					this.rl.close();
-					process.kill(process.pid, 'SIGINT');
-				}
-			});
-		}
-
-		realStop() {
-			if (process.platform === 'win32') {
-				return;
-			}
-
-			this.rl.close();
-			this.rl = undefined;
-		}
-	}
-
-	let stdinDiscarder;
-
-	class Ora {
-		constructor(options) {
-			if (!stdinDiscarder) {
-				stdinDiscarder = new StdinDiscarder();
-			}
-
-			if (typeof options === 'string') {
-				options = {
-					text: options
-				};
-			}
-
-			this.options = {
-				text: '',
-				color: 'cyan',
-				stream: process.stderr,
-				discardStdin: true,
-				...options
-			};
-
-			this.spinner = this.options.spinner;
-
-			this.color = this.options.color;
-			this.hideCursor = this.options.hideCursor !== false;
-			this.interval = this.options.interval || this.spinner.interval || 100;
-			this.stream = this.options.stream;
-			this.id = undefined;
-			this.isEnabled = typeof this.options.isEnabled === 'boolean' ? this.options.isEnabled : isInteractive({stream: this.stream});
-			this.isSilent = typeof this.options.isSilent === 'boolean' ? this.options.isSilent : false;
-
-			// Set *after* `this.stream`
-			this.text = this.options.text;
-			this.prefixText = this.options.prefixText;
-			this.linesToClear = 0;
-			this.indent = this.options.indent;
-			this.discardStdin = this.options.discardStdin;
-			this.isDiscardingStdin = false;
-		}
-
-		get indent() {
-			return this._indent;
-		}
-
-		set indent(indent = 0) {
-			if (!(indent >= 0 && Number.isInteger(indent))) {
-				throw new Error('The `indent` option must be an integer from 0 and up');
-			}
-
-			this._indent = indent;
-		}
-
-		_updateInterval(interval) {
-			if (interval !== undefined) {
-				this.interval = interval;
-			}
-		}
-
-		get spinner() {
-			return this._spinner;
-		}
-
-		set spinner(spinner) {
-			this.frameIndex = 0;
-
-			if (typeof spinner === 'object') {
-				if (spinner.frames === undefined) {
-					throw new Error('The given spinner must have a `frames` property');
-				}
-
-				this._spinner = spinner;
-			} else if (process.platform === 'win32') {
-				this._spinner = cliSpinners.line;
-			} else if (spinner === undefined) {
-				// Set default spinner
-				this._spinner = cliSpinners.dots;
-			} else if (cliSpinners[spinner]) {
-				this._spinner = cliSpinners[spinner];
-			} else {
-				throw new Error(`There is no built-in spinner named '${spinner}'. See https://github.com/sindresorhus/cli-spinners/blob/master/spinners.json for a full list.`);
-			}
-
-			this._updateInterval(this._spinner.interval);
-		}
-
-		get text() {
-			return this[TEXT];
-		}
-
-		get prefixText() {
-			return this[PREFIX_TEXT];
-		}
-
-		get isSpinning() {
-			return this.id !== undefined;
-		}
-
-		getFullPrefixText(prefixText = this[PREFIX_TEXT], postfix = ' ') {
-			if (typeof prefixText === 'string') {
-				return prefixText + postfix;
-			}
-
-			if (typeof prefixText === 'function') {
-				return prefixText() + postfix;
-			}
-
-			return '';
-		}
-
-		updateLineCount() {
-			const columns = this.stream.columns || 80;
-			const fullPrefixText = this.getFullPrefixText(this.prefixText, '-');
-			this.lineCount = stripAnsi$2(fullPrefixText + '--' + this[TEXT]).split('\n').reduce((count, line) => {
-				return count + Math.max(1, Math.ceil(wcwidth_1(line) / columns));
-			}, 0);
-		}
-
-		set text(value) {
-			this[TEXT] = value;
-			this.updateLineCount();
-		}
-
-		set prefixText(value) {
-			this[PREFIX_TEXT] = value;
-			this.updateLineCount();
-		}
-
-		get isEnabled() {
-			return this._isEnabled && !this.isSilent;
-		}
-
-		set isEnabled(value) {
-			if (typeof value !== 'boolean') {
-				throw new TypeError('The `isEnabled` option must be a boolean');
-			}
-
-			this._isEnabled = value;
-		}
-
-		get isSilent() {
-			return this._isSilent;
-		}
-
-		set isSilent(value) {
-			if (typeof value !== 'boolean') {
-				throw new TypeError('The `isSilent` option must be a boolean');
-			}
-
-			this._isSilent = value;
-		}
-
-		frame() {
-			const {frames} = this.spinner;
-			let frame = frames[this.frameIndex];
-
-			if (this.color) {
-				frame = source$1[this.color](frame);
-			}
-
-			this.frameIndex = ++this.frameIndex % frames.length;
-			const fullPrefixText = (typeof this.prefixText === 'string' && this.prefixText !== '') ? this.prefixText + ' ' : '';
-			const fullText = typeof this.text === 'string' ? ' ' + this.text : '';
-
-			return fullPrefixText + frame + fullText;
-		}
-
-		clear() {
-			if (!this.isEnabled || !this.stream.isTTY) {
-				return this;
-			}
-
-			for (let i = 0; i < this.linesToClear; i++) {
-				if (i > 0) {
-					this.stream.moveCursor(0, -1);
-				}
-
-				this.stream.clearLine();
-				this.stream.cursorTo(this.indent);
-			}
-
-			this.linesToClear = 0;
-
-			return this;
-		}
-
-		render() {
-			if (this.isSilent) {
-				return this;
-			}
-
-			this.clear();
-			this.stream.write(this.frame());
-			this.linesToClear = this.lineCount;
-
-			return this;
-		}
-
-		start(text) {
-			if (text) {
-				this.text = text;
-			}
-
-			if (this.isSilent) {
-				return this;
-			}
-
-			if (!this.isEnabled) {
-				if (this.text) {
-					this.stream.write(`- ${this.text}\n`);
-				}
-
-				return this;
-			}
-
-			if (this.isSpinning) {
-				return this;
-			}
-
-			if (this.hideCursor) {
-				cliCursor.hide(this.stream);
-			}
-
-			if (this.discardStdin && process.stdin.isTTY) {
-				this.isDiscardingStdin = true;
-				stdinDiscarder.start();
-			}
-
-			this.render();
-			this.id = setInterval(this.render.bind(this), this.interval);
-
-			return this;
-		}
-
-		stop() {
-			if (!this.isEnabled) {
-				return this;
-			}
-
-			clearInterval(this.id);
-			this.id = undefined;
-			this.frameIndex = 0;
-			this.clear();
-			if (this.hideCursor) {
-				cliCursor.show(this.stream);
-			}
-
-			if (this.discardStdin && process.stdin.isTTY && this.isDiscardingStdin) {
-				stdinDiscarder.stop();
-				this.isDiscardingStdin = false;
-			}
-
-			return this;
-		}
-
-		succeed(text) {
-			return this.stopAndPersist({symbol: logSymbols.success, text});
-		}
-
-		fail(text) {
-			return this.stopAndPersist({symbol: logSymbols.error, text});
-		}
-
-		warn(text) {
-			return this.stopAndPersist({symbol: logSymbols.warning, text});
-		}
-
-		info(text) {
-			return this.stopAndPersist({symbol: logSymbols.info, text});
-		}
-
-		stopAndPersist(options = {}) {
-			if (this.isSilent) {
-				return this;
-			}
-
-			const prefixText = options.prefixText || this.prefixText;
-			const text = options.text || this.text;
-			const fullText = (typeof text === 'string') ? ' ' + text : '';
-
-			this.stop();
-			this.stream.write(`${this.getFullPrefixText(prefixText, ' ')}${options.symbol || ' '}${fullText}\n`);
-
-			return this;
-		}
-	}
-
-	const oraFactory = function (options) {
-		return new Ora(options);
-	};
-
-	var ora = oraFactory;
-
-	var promise = (action, options) => {
-		// eslint-disable-next-line promise/prefer-await-to-then
-		if (typeof action.then !== 'function') {
-			throw new TypeError('Parameter `action` must be a Promise');
-		}
-
-		const spinner = new Ora(options);
-		spinner.start();
-
-		(async () => {
-			try {
-				await action;
-				spinner.succeed();
-			} catch (_) {
-				spinner.fail();
-			}
-		})();
-
-		return spinner;
-	};
-	ora.promise = promise;
-
 	var promisify = fn => {
 	  return function() {
 	    const length = arguments.length;
@@ -6631,13 +3152,13 @@
 	    var res = [];
 	    for (var i = 0; i < xs.length; i++) {
 	        var x = fn(xs[i], i);
-	        if (isArray$2(x)) res.push.apply(res, x);
+	        if (isArray(x)) res.push.apply(res, x);
 	        else res.push(x);
 	    }
 	    return res;
 	};
 
-	var isArray$2 = Array.isArray || function (xs) {
+	var isArray = Array.isArray || function (xs) {
 	    return Object.prototype.toString.call(xs) === '[object Array]';
 	};
 
@@ -6918,7 +3439,7 @@
 	var qmark = '[^/]';
 
 	// * => any number of characters
-	var star$1 = qmark + '*?';
+	var star = qmark + '*?';
 
 	// ** when dots are allowed.  Anything goes, except .. and .
 	// not (^ or / followed by one or two dots followed by $ or /),
@@ -7199,7 +3720,7 @@
 	      // that wasn't consumed by this pass.
 	      switch (stateChar) {
 	        case '*':
-	          re += star$1;
+	          re += star;
 	          hasMagic = true;
 	        break
 	        case '?':
@@ -7433,7 +3954,7 @@
 	    });
 
 	    this.debug('tail=%j\n   %s', tail, tail, pl, re);
-	    var t = pl.type === '*' ? star$1
+	    var t = pl.type === '*' ? star
 	      : pl.type === '?' ? qmark
 	      : '\\' + pl.type;
 
@@ -7552,7 +4073,7 @@
 	  }
 	  var options = this.options;
 
-	  var twoStar = options.noglobstar ? star$1
+	  var twoStar = options.noglobstar ? star
 	    : options.dot ? twoStarDot
 	    : twoStarNoDot;
 	  var flags = options.nocase ? 'i' : '';
@@ -7850,7 +4371,7 @@
 
 	var inherits = createCommonjsModule(function (module) {
 	try {
-	  var util = util$4;
+	  var util = util$2;
 	  /* istanbul ignore next */
 	  if (typeof util.inherits !== 'function') throw '';
 	  module.exports = util.inherits;
@@ -8777,7 +5298,7 @@
 
 	var glob_1 = glob;
 
-	var EE$1 = events.EventEmitter;
+	var EE = events.EventEmitter;
 	var setopts$2 = common.setopts;
 	var ownProp$2 = common.ownProp;
 
@@ -8841,7 +5362,7 @@
 	};
 
 	glob.Glob = Glob;
-	inherits(Glob, EE$1);
+	inherits(Glob, EE);
 	function Glob (pattern, options, cb) {
 	  if (typeof options === 'function') {
 	    cb = options;
@@ -9533,7 +6054,7 @@
 
 	var isWindows$1 = (process.platform === "win32");
 
-	function defaults$1 (options) {
+	function defaults (options) {
 	  var methods = [
 	    'unlink',
 	    'chmod',
@@ -9572,7 +6093,7 @@
 	  assert(options, 'rimraf: invalid options argument provided');
 	  assert.equal(typeof options, 'object', 'rimraf: options should be object');
 
-	  defaults$1(options);
+	  defaults(options);
 
 	  var busyTries = 0;
 	  var errState = null;
@@ -9780,7 +6301,7 @@
 	// deep directory trees.
 	function rimrafSync (p, options) {
 	  options = options || {};
-	  defaults$1(options);
+	  defaults(options);
 
 	  assert(p, 'rimraf: missing path');
 	  assert.equal(typeof p, 'string', 'rimraf: path should be a string');
@@ -12417,11 +8938,11 @@
 	    }
 	  };
 
-	  if (util$4.inspect.custom !== undefined) {
+	  if (util$2.inspect.custom !== undefined) {
 	    // Without this console.log(jetpack) throws obscure error. Details:
 	    // https://github.com/szwacz/fs-jetpack/issues/29
 	    // https://nodejs.org/api/util.html#util_custom_inspection_functions_on_objects
-	    api[util$4.inspect.custom] = () => {
+	    api[util$2.inspect.custom] = () => {
 	      return `[fs-jetpack CWD: ${getCwdPath()}]`;
 	    };
 	  }
@@ -12431,7 +8952,14 @@
 
 	var jetpack = jetpackContext;
 
-	var main$1 = jetpack();
+	var main = jetpack();
+
+	const saveFilepathsAsJSON = async (createdFiles = [], buildName = "latest", root = '')=>{
+	    const res = await main.writeAsync(`${root}/.engineer/.builds/${buildName}/index.json`, `{ 
+            "files" : ${JSON.stringify(createdFiles)},
+            "buildAt" : "${new Date().toLocaleString('es-GT')}"
+        }`);
+	};
 
 	// deberia ponerle path al file.
 
@@ -12442,15 +8970,15 @@
 	  
 	  
 	      let file = {
-	        ...main$1.inspect(path),
+	        ...main.inspect(path),
 	        path,
-	        contents : main$1.read(path)
+	        contents : main.read(path)
 	      };
 	      files.push(file);
 	  
 	     
 
-	  return files;
+	  return files[0];
 	};
 
 	let generatePath = (dest, model)=>{
@@ -16099,7 +12627,7 @@
 		decode: decode$1
 	};
 
-	var util$3 = createCommonjsModule(function (module, exports) {
+	var util$1 = createCommonjsModule(function (module, exports) {
 	/* -*- Mode: js; js-indent-level: 2; -*- */
 	/*
 	 * Copyright 2011 Mozilla Foundation and contributors
@@ -16589,20 +13117,20 @@
 	}
 	exports.computeSourceURL = computeSourceURL;
 	});
-	var util_1 = util$3.getArg;
-	var util_2 = util$3.urlParse;
-	var util_3 = util$3.urlGenerate;
-	var util_4 = util$3.normalize;
-	var util_5 = util$3.join;
-	var util_6 = util$3.isAbsolute;
-	var util_7 = util$3.relative;
-	var util_8 = util$3.toSetString;
-	var util_9 = util$3.fromSetString;
-	var util_10 = util$3.compareByOriginalPositions;
-	var util_11 = util$3.compareByGeneratedPositionsDeflated;
-	var util_12 = util$3.compareByGeneratedPositionsInflated;
-	var util_13 = util$3.parseSourceMapInput;
-	var util_14 = util$3.computeSourceURL;
+	var util_1 = util$1.getArg;
+	var util_2 = util$1.urlParse;
+	var util_3 = util$1.urlGenerate;
+	var util_4 = util$1.normalize;
+	var util_5 = util$1.join;
+	var util_6 = util$1.isAbsolute;
+	var util_7 = util$1.relative;
+	var util_8 = util$1.toSetString;
+	var util_9 = util$1.fromSetString;
+	var util_10 = util$1.compareByOriginalPositions;
+	var util_11 = util$1.compareByGeneratedPositionsDeflated;
+	var util_12 = util$1.compareByGeneratedPositionsInflated;
+	var util_13 = util$1.parseSourceMapInput;
+	var util_14 = util$1.computeSourceURL;
 
 	/* -*- Mode: js; js-indent-level: 2; -*- */
 	/*
@@ -16653,7 +13181,7 @@
 	 * @param String aStr
 	 */
 	ArraySet.prototype.add = function ArraySet_add(aStr, aAllowDuplicates) {
-	  var sStr = hasNativeMap ? aStr : util$3.toSetString(aStr);
+	  var sStr = hasNativeMap ? aStr : util$1.toSetString(aStr);
 	  var isDuplicate = hasNativeMap ? this.has(aStr) : has.call(this._set, sStr);
 	  var idx = this._array.length;
 	  if (!isDuplicate || aAllowDuplicates) {
@@ -16677,7 +13205,7 @@
 	  if (hasNativeMap) {
 	    return this._set.has(aStr);
 	  } else {
-	    var sStr = util$3.toSetString(aStr);
+	    var sStr = util$1.toSetString(aStr);
 	    return has.call(this._set, sStr);
 	  }
 	};
@@ -16694,7 +13222,7 @@
 	        return idx;
 	    }
 	  } else {
-	    var sStr = util$3.toSetString(aStr);
+	    var sStr = util$1.toSetString(aStr);
 	    if (has.call(this._set, sStr)) {
 	      return this._set[sStr];
 	    }
@@ -16750,7 +13278,7 @@
 	  var columnA = mappingA.generatedColumn;
 	  var columnB = mappingB.generatedColumn;
 	  return lineB > lineA || lineB == lineA && columnB >= columnA ||
-	         util$3.compareByGeneratedPositionsInflated(mappingA, mappingB) <= 0;
+	         util$1.compareByGeneratedPositionsInflated(mappingA, mappingB) <= 0;
 	}
 
 	/**
@@ -16802,7 +13330,7 @@
 	 */
 	MappingList.prototype.toArray = function MappingList_toArray() {
 	  if (!this._sorted) {
-	    this._array.sort(util$3.compareByGeneratedPositionsInflated);
+	    this._array.sort(util$1.compareByGeneratedPositionsInflated);
 	    this._sorted = true;
 	  }
 	  return this._array;
@@ -16838,9 +13366,9 @@
 	  if (!aArgs) {
 	    aArgs = {};
 	  }
-	  this._file = util$3.getArg(aArgs, 'file', null);
-	  this._sourceRoot = util$3.getArg(aArgs, 'sourceRoot', null);
-	  this._skipValidation = util$3.getArg(aArgs, 'skipValidation', false);
+	  this._file = util$1.getArg(aArgs, 'file', null);
+	  this._sourceRoot = util$1.getArg(aArgs, 'sourceRoot', null);
+	  this._skipValidation = util$1.getArg(aArgs, 'skipValidation', false);
 	  this._sources = new ArraySet$1();
 	  this._names = new ArraySet$1();
 	  this._mappings = new MappingList$1();
@@ -16872,7 +13400,7 @@
 	      if (mapping.source != null) {
 	        newMapping.source = mapping.source;
 	        if (sourceRoot != null) {
-	          newMapping.source = util$3.relative(sourceRoot, newMapping.source);
+	          newMapping.source = util$1.relative(sourceRoot, newMapping.source);
 	        }
 
 	        newMapping.original = {
@@ -16890,7 +13418,7 @@
 	    aSourceMapConsumer.sources.forEach(function (sourceFile) {
 	      var sourceRelative = sourceFile;
 	      if (sourceRoot !== null) {
-	        sourceRelative = util$3.relative(sourceRoot, sourceFile);
+	        sourceRelative = util$1.relative(sourceRoot, sourceFile);
 	      }
 
 	      if (!generator._sources.has(sourceRelative)) {
@@ -16917,10 +13445,10 @@
 	 */
 	SourceMapGenerator.prototype.addMapping =
 	  function SourceMapGenerator_addMapping(aArgs) {
-	    var generated = util$3.getArg(aArgs, 'generated');
-	    var original = util$3.getArg(aArgs, 'original', null);
-	    var source = util$3.getArg(aArgs, 'source', null);
-	    var name = util$3.getArg(aArgs, 'name', null);
+	    var generated = util$1.getArg(aArgs, 'generated');
+	    var original = util$1.getArg(aArgs, 'original', null);
+	    var source = util$1.getArg(aArgs, 'source', null);
+	    var name = util$1.getArg(aArgs, 'name', null);
 
 	    if (!this._skipValidation) {
 	      this._validateMapping(generated, original, source, name);
@@ -16957,7 +13485,7 @@
 	  function SourceMapGenerator_setSourceContent(aSourceFile, aSourceContent) {
 	    var source = aSourceFile;
 	    if (this._sourceRoot != null) {
-	      source = util$3.relative(this._sourceRoot, source);
+	      source = util$1.relative(this._sourceRoot, source);
 	    }
 
 	    if (aSourceContent != null) {
@@ -16966,11 +13494,11 @@
 	      if (!this._sourcesContents) {
 	        this._sourcesContents = Object.create(null);
 	      }
-	      this._sourcesContents[util$3.toSetString(source)] = aSourceContent;
+	      this._sourcesContents[util$1.toSetString(source)] = aSourceContent;
 	    } else if (this._sourcesContents) {
 	      // Remove the source file from the _sourcesContents map.
 	      // If the _sourcesContents map is empty, set the property to null.
-	      delete this._sourcesContents[util$3.toSetString(source)];
+	      delete this._sourcesContents[util$1.toSetString(source)];
 	      if (Object.keys(this._sourcesContents).length === 0) {
 	        this._sourcesContents = null;
 	      }
@@ -17009,7 +13537,7 @@
 	    var sourceRoot = this._sourceRoot;
 	    // Make "sourceFile" relative if an absolute Url is passed.
 	    if (sourceRoot != null) {
-	      sourceFile = util$3.relative(sourceRoot, sourceFile);
+	      sourceFile = util$1.relative(sourceRoot, sourceFile);
 	    }
 	    // Applying the SourceMap can add and remove items from the sources and
 	    // the names array.
@@ -17028,10 +13556,10 @@
 	          // Copy mapping
 	          mapping.source = original.source;
 	          if (aSourceMapPath != null) {
-	            mapping.source = util$3.join(aSourceMapPath, mapping.source);
+	            mapping.source = util$1.join(aSourceMapPath, mapping.source);
 	          }
 	          if (sourceRoot != null) {
-	            mapping.source = util$3.relative(sourceRoot, mapping.source);
+	            mapping.source = util$1.relative(sourceRoot, mapping.source);
 	          }
 	          mapping.originalLine = original.line;
 	          mapping.originalColumn = original.column;
@@ -17060,10 +13588,10 @@
 	      var content = aSourceMapConsumer.sourceContentFor(sourceFile);
 	      if (content != null) {
 	        if (aSourceMapPath != null) {
-	          sourceFile = util$3.join(aSourceMapPath, sourceFile);
+	          sourceFile = util$1.join(aSourceMapPath, sourceFile);
 	        }
 	        if (sourceRoot != null) {
-	          sourceFile = util$3.relative(sourceRoot, sourceFile);
+	          sourceFile = util$1.relative(sourceRoot, sourceFile);
 	        }
 	        this.setSourceContent(sourceFile, content);
 	      }
@@ -17152,7 +13680,7 @@
 	      }
 	      else {
 	        if (i > 0) {
-	          if (!util$3.compareByGeneratedPositionsInflated(mapping, mappings[i - 1])) {
+	          if (!util$1.compareByGeneratedPositionsInflated(mapping, mappings[i - 1])) {
 	            continue;
 	          }
 	          next += ',';
@@ -17197,9 +13725,9 @@
 	        return null;
 	      }
 	      if (aSourceRoot != null) {
-	        source = util$3.relative(aSourceRoot, source);
+	        source = util$1.relative(aSourceRoot, source);
 	      }
-	      var key = util$3.toSetString(source);
+	      var key = util$1.toSetString(source);
 	      return Object.prototype.hasOwnProperty.call(this._sourcesContents, key)
 	        ? this._sourcesContents[key]
 	        : null;
@@ -17496,7 +14024,7 @@
 	function SourceMapConsumer(aSourceMap, aSourceMapURL) {
 	  var sourceMap = aSourceMap;
 	  if (typeof aSourceMap === 'string') {
-	    sourceMap = util$3.parseSourceMapInput(aSourceMap);
+	    sourceMap = util$1.parseSourceMapInput(aSourceMap);
 	  }
 
 	  return sourceMap.sections != null
@@ -17627,7 +14155,7 @@
 	    var sourceRoot = this.sourceRoot;
 	    mappings.map(function (mapping) {
 	      var source = mapping.source === null ? null : this._sources.at(mapping.source);
-	      source = util$3.computeSourceURL(sourceRoot, source, this._sourceMapURL);
+	      source = util$1.computeSourceURL(sourceRoot, source, this._sourceMapURL);
 	      return {
 	        source: source,
 	        generatedLine: mapping.generatedLine,
@@ -17663,16 +14191,16 @@
 	 */
 	SourceMapConsumer.prototype.allGeneratedPositionsFor =
 	  function SourceMapConsumer_allGeneratedPositionsFor(aArgs) {
-	    var line = util$3.getArg(aArgs, 'line');
+	    var line = util$1.getArg(aArgs, 'line');
 
 	    // When there is no exact match, BasicSourceMapConsumer.prototype._findMapping
 	    // returns the index of the closest mapping less than the needle. By
 	    // setting needle.originalColumn to 0, we thus find the last mapping for
 	    // the given line, provided such a mapping exists.
 	    var needle = {
-	      source: util$3.getArg(aArgs, 'source'),
+	      source: util$1.getArg(aArgs, 'source'),
 	      originalLine: line,
-	      originalColumn: util$3.getArg(aArgs, 'column', 0)
+	      originalColumn: util$1.getArg(aArgs, 'column', 0)
 	    };
 
 	    needle.source = this._findSourceIndex(needle.source);
@@ -17686,7 +14214,7 @@
 	                                  this._originalMappings,
 	                                  "originalLine",
 	                                  "originalColumn",
-	                                  util$3.compareByOriginalPositions,
+	                                  util$1.compareByOriginalPositions,
 	                                  binarySearch.LEAST_UPPER_BOUND);
 	    if (index >= 0) {
 	      var mapping = this._originalMappings[index];
@@ -17700,9 +14228,9 @@
 	        // the line we found.
 	        while (mapping && mapping.originalLine === originalLine) {
 	          mappings.push({
-	            line: util$3.getArg(mapping, 'generatedLine', null),
-	            column: util$3.getArg(mapping, 'generatedColumn', null),
-	            lastColumn: util$3.getArg(mapping, 'lastGeneratedColumn', null)
+	            line: util$1.getArg(mapping, 'generatedLine', null),
+	            column: util$1.getArg(mapping, 'generatedColumn', null),
+	            lastColumn: util$1.getArg(mapping, 'lastGeneratedColumn', null)
 	          });
 
 	          mapping = this._originalMappings[++index];
@@ -17718,9 +14246,9 @@
 	               mapping.originalLine === line &&
 	               mapping.originalColumn == originalColumn) {
 	          mappings.push({
-	            line: util$3.getArg(mapping, 'generatedLine', null),
-	            column: util$3.getArg(mapping, 'generatedColumn', null),
-	            lastColumn: util$3.getArg(mapping, 'lastGeneratedColumn', null)
+	            line: util$1.getArg(mapping, 'generatedLine', null),
+	            column: util$1.getArg(mapping, 'generatedColumn', null),
+	            lastColumn: util$1.getArg(mapping, 'lastGeneratedColumn', null)
 	          });
 
 	          mapping = this._originalMappings[++index];
@@ -17770,18 +14298,18 @@
 	function BasicSourceMapConsumer(aSourceMap, aSourceMapURL) {
 	  var sourceMap = aSourceMap;
 	  if (typeof aSourceMap === 'string') {
-	    sourceMap = util$3.parseSourceMapInput(aSourceMap);
+	    sourceMap = util$1.parseSourceMapInput(aSourceMap);
 	  }
 
-	  var version = util$3.getArg(sourceMap, 'version');
-	  var sources = util$3.getArg(sourceMap, 'sources');
+	  var version = util$1.getArg(sourceMap, 'version');
+	  var sources = util$1.getArg(sourceMap, 'sources');
 	  // Sass 3.3 leaves out the 'names' array, so we deviate from the spec (which
 	  // requires the array) to play nice here.
-	  var names = util$3.getArg(sourceMap, 'names', []);
-	  var sourceRoot = util$3.getArg(sourceMap, 'sourceRoot', null);
-	  var sourcesContent = util$3.getArg(sourceMap, 'sourcesContent', null);
-	  var mappings = util$3.getArg(sourceMap, 'mappings');
-	  var file = util$3.getArg(sourceMap, 'file', null);
+	  var names = util$1.getArg(sourceMap, 'names', []);
+	  var sourceRoot = util$1.getArg(sourceMap, 'sourceRoot', null);
+	  var sourcesContent = util$1.getArg(sourceMap, 'sourcesContent', null);
+	  var mappings = util$1.getArg(sourceMap, 'mappings');
+	  var file = util$1.getArg(sourceMap, 'file', null);
 
 	  // Once again, Sass deviates from the spec and supplies the version as a
 	  // string rather than a number, so we use loose equality checking here.
@@ -17790,7 +14318,7 @@
 	  }
 
 	  if (sourceRoot) {
-	    sourceRoot = util$3.normalize(sourceRoot);
+	    sourceRoot = util$1.normalize(sourceRoot);
 	  }
 
 	  sources = sources
@@ -17798,14 +14326,14 @@
 	    // Some source maps produce relative source paths like "./foo.js" instead of
 	    // "foo.js".  Normalize these first so that future comparisons will succeed.
 	    // See bugzil.la/1090768.
-	    .map(util$3.normalize)
+	    .map(util$1.normalize)
 	    // Always ensure that absolute sources are internally stored relative to
 	    // the source root, if the source root is absolute. Not doing this would
 	    // be particularly problematic when the source root is a prefix of the
 	    // source (valid, but why??). See github issue #199 and bugzil.la/1188982.
 	    .map(function (source) {
-	      return sourceRoot && util$3.isAbsolute(sourceRoot) && util$3.isAbsolute(source)
-	        ? util$3.relative(sourceRoot, source)
+	      return sourceRoot && util$1.isAbsolute(sourceRoot) && util$1.isAbsolute(source)
+	        ? util$1.relative(sourceRoot, source)
 	        : source;
 	    });
 
@@ -17817,7 +14345,7 @@
 	  this._sources = ArraySet$2.fromArray(sources, true);
 
 	  this._absoluteSources = this._sources.toArray().map(function (s) {
-	    return util$3.computeSourceURL(sourceRoot, s, aSourceMapURL);
+	    return util$1.computeSourceURL(sourceRoot, s, aSourceMapURL);
 	  });
 
 	  this.sourceRoot = sourceRoot;
@@ -17837,7 +14365,7 @@
 	BasicSourceMapConsumer.prototype._findSourceIndex = function(aSource) {
 	  var relativeSource = aSource;
 	  if (this.sourceRoot != null) {
-	    relativeSource = util$3.relative(this.sourceRoot, relativeSource);
+	    relativeSource = util$1.relative(this.sourceRoot, relativeSource);
 	  }
 
 	  if (this._sources.has(relativeSource)) {
@@ -17877,7 +14405,7 @@
 	    smc.file = aSourceMap._file;
 	    smc._sourceMapURL = aSourceMapURL;
 	    smc._absoluteSources = smc._sources.toArray().map(function (s) {
-	      return util$3.computeSourceURL(smc.sourceRoot, s, aSourceMapURL);
+	      return util$1.computeSourceURL(smc.sourceRoot, s, aSourceMapURL);
 	    });
 
 	    // Because we are modifying the entries (by converting string sources and
@@ -17910,7 +14438,7 @@
 	      destGeneratedMappings.push(destMapping);
 	    }
 
-	    quickSort$1(smc.__originalMappings, util$3.compareByOriginalPositions);
+	    quickSort$1(smc.__originalMappings, util$1.compareByOriginalPositions);
 
 	    return smc;
 	  };
@@ -18043,10 +14571,10 @@
 	      }
 	    }
 
-	    quickSort$1(generatedMappings, util$3.compareByGeneratedPositionsDeflated);
+	    quickSort$1(generatedMappings, util$1.compareByGeneratedPositionsDeflated);
 	    this.__generatedMappings = generatedMappings;
 
-	    quickSort$1(originalMappings, util$3.compareByOriginalPositions);
+	    quickSort$1(originalMappings, util$1.compareByOriginalPositions);
 	    this.__originalMappings = originalMappings;
 	  };
 
@@ -18128,8 +14656,8 @@
 	BasicSourceMapConsumer.prototype.originalPositionFor =
 	  function SourceMapConsumer_originalPositionFor(aArgs) {
 	    var needle = {
-	      generatedLine: util$3.getArg(aArgs, 'line'),
-	      generatedColumn: util$3.getArg(aArgs, 'column')
+	      generatedLine: util$1.getArg(aArgs, 'line'),
+	      generatedColumn: util$1.getArg(aArgs, 'column')
 	    };
 
 	    var index = this._findMapping(
@@ -18137,27 +14665,27 @@
 	      this._generatedMappings,
 	      "generatedLine",
 	      "generatedColumn",
-	      util$3.compareByGeneratedPositionsDeflated,
-	      util$3.getArg(aArgs, 'bias', SourceMapConsumer.GREATEST_LOWER_BOUND)
+	      util$1.compareByGeneratedPositionsDeflated,
+	      util$1.getArg(aArgs, 'bias', SourceMapConsumer.GREATEST_LOWER_BOUND)
 	    );
 
 	    if (index >= 0) {
 	      var mapping = this._generatedMappings[index];
 
 	      if (mapping.generatedLine === needle.generatedLine) {
-	        var source = util$3.getArg(mapping, 'source', null);
+	        var source = util$1.getArg(mapping, 'source', null);
 	        if (source !== null) {
 	          source = this._sources.at(source);
-	          source = util$3.computeSourceURL(this.sourceRoot, source, this._sourceMapURL);
+	          source = util$1.computeSourceURL(this.sourceRoot, source, this._sourceMapURL);
 	        }
-	        var name = util$3.getArg(mapping, 'name', null);
+	        var name = util$1.getArg(mapping, 'name', null);
 	        if (name !== null) {
 	          name = this._names.at(name);
 	        }
 	        return {
 	          source: source,
-	          line: util$3.getArg(mapping, 'originalLine', null),
-	          column: util$3.getArg(mapping, 'originalColumn', null),
+	          line: util$1.getArg(mapping, 'originalLine', null),
+	          column: util$1.getArg(mapping, 'originalColumn', null),
 	          name: name
 	        };
 	      }
@@ -18202,12 +14730,12 @@
 
 	    var relativeSource = aSource;
 	    if (this.sourceRoot != null) {
-	      relativeSource = util$3.relative(this.sourceRoot, relativeSource);
+	      relativeSource = util$1.relative(this.sourceRoot, relativeSource);
 	    }
 
 	    var url;
 	    if (this.sourceRoot != null
-	        && (url = util$3.urlParse(this.sourceRoot))) {
+	        && (url = util$1.urlParse(this.sourceRoot))) {
 	      // XXX: file:// URIs and absolute paths lead to unexpected behavior for
 	      // many users. We can help them out when they expect file:// URIs to
 	      // behave like it would if they were running a local HTTP server. See
@@ -18261,7 +14789,7 @@
 	 */
 	BasicSourceMapConsumer.prototype.generatedPositionFor =
 	  function SourceMapConsumer_generatedPositionFor(aArgs) {
-	    var source = util$3.getArg(aArgs, 'source');
+	    var source = util$1.getArg(aArgs, 'source');
 	    source = this._findSourceIndex(source);
 	    if (source < 0) {
 	      return {
@@ -18273,8 +14801,8 @@
 
 	    var needle = {
 	      source: source,
-	      originalLine: util$3.getArg(aArgs, 'line'),
-	      originalColumn: util$3.getArg(aArgs, 'column')
+	      originalLine: util$1.getArg(aArgs, 'line'),
+	      originalColumn: util$1.getArg(aArgs, 'column')
 	    };
 
 	    var index = this._findMapping(
@@ -18282,8 +14810,8 @@
 	      this._originalMappings,
 	      "originalLine",
 	      "originalColumn",
-	      util$3.compareByOriginalPositions,
-	      util$3.getArg(aArgs, 'bias', SourceMapConsumer.GREATEST_LOWER_BOUND)
+	      util$1.compareByOriginalPositions,
+	      util$1.getArg(aArgs, 'bias', SourceMapConsumer.GREATEST_LOWER_BOUND)
 	    );
 
 	    if (index >= 0) {
@@ -18291,9 +14819,9 @@
 
 	      if (mapping.source === needle.source) {
 	        return {
-	          line: util$3.getArg(mapping, 'generatedLine', null),
-	          column: util$3.getArg(mapping, 'generatedColumn', null),
-	          lastColumn: util$3.getArg(mapping, 'lastGeneratedColumn', null)
+	          line: util$1.getArg(mapping, 'generatedLine', null),
+	          column: util$1.getArg(mapping, 'generatedColumn', null),
+	          lastColumn: util$1.getArg(mapping, 'lastGeneratedColumn', null)
 	        };
 	      }
 	    }
@@ -18359,11 +14887,11 @@
 	function IndexedSourceMapConsumer(aSourceMap, aSourceMapURL) {
 	  var sourceMap = aSourceMap;
 	  if (typeof aSourceMap === 'string') {
-	    sourceMap = util$3.parseSourceMapInput(aSourceMap);
+	    sourceMap = util$1.parseSourceMapInput(aSourceMap);
 	  }
 
-	  var version = util$3.getArg(sourceMap, 'version');
-	  var sections = util$3.getArg(sourceMap, 'sections');
+	  var version = util$1.getArg(sourceMap, 'version');
+	  var sections = util$1.getArg(sourceMap, 'sections');
 
 	  if (version != this._version) {
 	    throw new Error('Unsupported version: ' + version);
@@ -18382,9 +14910,9 @@
 	      // See https://github.com/mozilla/source-map/issues/16
 	      throw new Error('Support for url field in sections not implemented.');
 	    }
-	    var offset = util$3.getArg(s, 'offset');
-	    var offsetLine = util$3.getArg(offset, 'line');
-	    var offsetColumn = util$3.getArg(offset, 'column');
+	    var offset = util$1.getArg(s, 'offset');
+	    var offsetLine = util$1.getArg(offset, 'line');
+	    var offsetColumn = util$1.getArg(offset, 'column');
 
 	    if (offsetLine < lastOffset.line ||
 	        (offsetLine === lastOffset.line && offsetColumn < lastOffset.column)) {
@@ -18399,7 +14927,7 @@
 	        generatedLine: offsetLine + 1,
 	        generatedColumn: offsetColumn + 1
 	      },
-	      consumer: new SourceMapConsumer(util$3.getArg(s, 'map'), aSourceMapURL)
+	      consumer: new SourceMapConsumer(util$1.getArg(s, 'map'), aSourceMapURL)
 	    }
 	  });
 	}
@@ -18449,8 +14977,8 @@
 	IndexedSourceMapConsumer.prototype.originalPositionFor =
 	  function IndexedSourceMapConsumer_originalPositionFor(aArgs) {
 	    var needle = {
-	      generatedLine: util$3.getArg(aArgs, 'line'),
-	      generatedColumn: util$3.getArg(aArgs, 'column')
+	      generatedLine: util$1.getArg(aArgs, 'line'),
+	      generatedColumn: util$1.getArg(aArgs, 'column')
 	    };
 
 	    // Find the section containing the generated position we're trying to map
@@ -18546,7 +15074,7 @@
 
 	      // Only consider this section if the requested source is in the list of
 	      // sources of the consumer.
-	      if (section.consumer._findSourceIndex(util$3.getArg(aArgs, 'source')) === -1) {
+	      if (section.consumer._findSourceIndex(util$1.getArg(aArgs, 'source')) === -1) {
 	        continue;
 	      }
 	      var generatedPosition = section.consumer.generatedPositionFor(aArgs);
@@ -18585,7 +15113,7 @@
 	        var mapping = sectionMappings[j];
 
 	        var source = section.consumer._sources.at(mapping.source);
-	        source = util$3.computeSourceURL(section.consumer.sourceRoot, source, this._sourceMapURL);
+	        source = util$1.computeSourceURL(section.consumer.sourceRoot, source, this._sourceMapURL);
 	        this._sources.add(source);
 	        source = this._sources.indexOf(source);
 
@@ -18620,8 +15148,8 @@
 	      }
 	    }
 
-	    quickSort$1(this.__generatedMappings, util$3.compareByGeneratedPositionsDeflated);
-	    quickSort$1(this.__originalMappings, util$3.compareByOriginalPositions);
+	    quickSort$1(this.__generatedMappings, util$1.compareByGeneratedPositionsDeflated);
+	    quickSort$1(this.__originalMappings, util$1.compareByOriginalPositions);
 	  };
 
 	var IndexedSourceMapConsumer_1 = IndexedSourceMapConsumer;
@@ -18773,7 +15301,7 @@
 	      var content = aSourceMapConsumer.sourceContentFor(sourceFile);
 	      if (content != null) {
 	        if (aRelativePath != null) {
-	          sourceFile = util$3.join(aRelativePath, sourceFile);
+	          sourceFile = util$1.join(aRelativePath, sourceFile);
 	        }
 	        node.setSourceContent(sourceFile, content);
 	      }
@@ -18786,7 +15314,7 @@
 	        node.add(code);
 	      } else {
 	        var source = aRelativePath
-	          ? util$3.join(aRelativePath, mapping.source)
+	          ? util$1.join(aRelativePath, mapping.source)
 	          : mapping.source;
 	        node.add(new SourceNode(mapping.originalLine,
 	                                mapping.originalColumn,
@@ -18922,7 +15450,7 @@
 	 */
 	SourceNode.prototype.setSourceContent =
 	  function SourceNode_setSourceContent(aSourceFile, aSourceContent) {
-	    this.sourceContents[util$3.toSetString(aSourceFile)] = aSourceContent;
+	    this.sourceContents[util$1.toSetString(aSourceFile)] = aSourceContent;
 	  };
 
 	/**
@@ -18941,7 +15469,7 @@
 
 	    var sources = Object.keys(this.sourceContents);
 	    for (var i = 0, len = sources.length; i < len; i++) {
-	      aFn(util$3.fromSetString(sources[i]), this.sourceContents[sources[i]]);
+	      aFn(util$1.fromSetString(sources[i]), this.sourceContents[sources[i]]);
 	    }
 	  };
 
@@ -20710,11 +17238,13 @@
 	  // Get file path
 	  dest = generatePath(dest, model);
 
-	  let rendered = transmuteContents(file[0].contents, model);
+	  // console.log('generatePath dest', dest)
 
-	  main$1.file(dest, { content : rendered });
+	  let rendered = transmuteContents(file.contents, model);
+
+	  main.file(dest, { content : rendered });
 	  
-	  return {dest, rendered, file : file[0].name }
+	  return dest
 	  
 	};
 
@@ -20723,11 +17253,15 @@
 
 	      let validModel = config.model; //  refactor
 	      let scopedModel;
+
+	      let createdFiles = [];
+
 	      if(resource.hasOwnProperty('key')){
 	        scopedModel = validModel[resource.key]; // implementar lodash
 	      }else {
 	        scopedModel = validModel;
 	      }
+
 
 	     
 	          // fetchFiles
@@ -20735,56 +17269,80 @@
 	            
 	          if(Array.isArray(scopedModel)){
 	            
-	            scopedModel.forEach(async item =>{
-	              let createIf = true;
-	              if('if' in resource && typeof resource.if == 'function'){
-	                createIf = resource.if(item);
-	              }
+	            // scopedModel.forEach(async (item, idx) =>{
+	              for(let idx = 0; idx < scopedModel.length; idx++){
+	                let item = scopedModel[idx];
+
+	                let createIf = true;
+	                if('if' in resource && typeof resource.if == 'function'){
+	                  createIf = resource.if(item);
+	                }
 	              if(createIf){  
-	                await transmuteFile(file, item, resource.dest);
+	                createdFiles.push(await transmuteFile(file, item, resource.dest));
+	                // console.log('transmuted---', file)
 	              }
-	            });
+	              
+	              if (idx === scopedModel.length - 1){ 
+	                return createdFiles
+	              }
+	              
+	              }
+	              // })
 	          }else {
 	            let createIf = true;
 	              if('if' in resource && typeof resource.if == 'function'){
 	                createIf = resource.if(scopedModel);
 	              }
 	              if(createIf){  
-	                await transmuteFile(file, scopedModel, resource.dest);
+	                createdFiles.push(await transmuteFile(file, scopedModel, resource.dest));
 	              }
 	            
+	              return createdFiles;
 	          }
 	          
-	        
-	      
-	        
-	      return true;
+
+	  return 'hola'
 	      
 	      
 	  };
 
 	const transmute$1 = transmute;
 
-	const main$2 = async(path = `${process.cwd()}/engineer.config.js`)=>{
-	  console.log('init main');
+	// const ora = require('ora')
+
+
+	const main$1 = async(path = `${process.cwd()}/engineer.config.js`)=>{
+
 	  console.log(boxen('Engineer', {padding: 6, margin: 1, borderColor : "magenta" }));
-	  const spinner = ora('Building project').start();
+
+	  let createdFiles = [];
+
+	  // const spinner = ora('Building project').start()
 	  const before = new Date();
+
 	  let config = commonjsRequire();
+
 	  if('then' in config){
 	    config = await config;
 	  }
+
 	  // Execute engineer for each resource
 	  config.resources.forEach(async (resource, i) =>{
-	    await transmute$1(resource, config);
+	    
+	    const res = await transmute$1(resource, config);
+	    createdFiles.push(...res);
+	    
+
 	    if(i == (config.resources.length - 1)){
-	      spinner.stop();
+	      // spinner.stop()
 	      const after = new Date();
 	      console.log(`Build took ${after - before}ms`);
+	      saveFilepathsAsJSON(createdFiles, 'latest', path.replace('/engineer.config.js', '/'));
 	    }
 	  });
+
 	};
 
-	return main$2;
+	return main$1;
 
 })));
