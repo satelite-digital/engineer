@@ -1,8 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('os'), require('tty'), require('child_process'), require('path'), require('fs'), require('util'), require('assert'), require('events'), require('stream'), require('crypto')) :
-	typeof define === 'function' && define.amd ? define(['os', 'tty', 'child_process', 'path', 'fs', 'util', 'assert', 'events', 'stream', 'crypto'], factory) :
-	(global = global || self, global.query = factory(global.os, global.tty, global.child_process, global.path$1, global.fs, global.util$2, global.assert, global.events, global.stream$1, global.crypto));
-}(this, (function (os, tty, child_process, path$1, fs, util$2, assert, events, stream$1, crypto) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('os'), require('tty'), require('child_process'), require('path'), require('fs'), require('util'), require('assert'), require('events'), require('stream'), require('crypto')) :
+	typeof define === 'function' && define.amd ? define(['exports', 'os', 'tty', 'child_process', 'path', 'fs', 'util', 'assert', 'events', 'stream', 'crypto'], factory) :
+	(global = global || self, factory(global.query = {}, global.os, global.tty, global.child_process, global.path$1, global.fs, global.util$2, global.assert, global.events, global.stream$1, global.crypto));
+}(this, (function (exports, os, tty, child_process, path$1, fs, util$2, assert, events, stream$1, crypto) { 'use strict';
 
 	os = os && Object.prototype.hasOwnProperty.call(os, 'default') ? os['default'] : os;
 	tty = tty && Object.prototype.hasOwnProperty.call(tty, 'default') ? tty['default'] : tty;
@@ -17177,6 +17177,19 @@
         }`);
 	};
 
+	const backupFilesAndCleanProject = async (root = '')=>{
+	    // Find latest build
+	    const index = commonjsRequire();
+	    for(let i = 0; i < index.files.length; i++){
+	        const file = index.files[i];
+	        try{
+	            await main.moveAsync(file, `${root}/.engineer/.builds/latest/code/${file}`, { overwrite : true });
+	        }catch(err){
+	            console.log('failed to move: ', file);
+	        }
+	    }
+	};
+
 	// deberia ponerle path al file.
 
 	let fetchFile = async (path)=>{
@@ -17350,6 +17363,14 @@
 
 	};
 
-	return main$1;
+	const build = main$1;
+
+	const cleanup = backupFilesAndCleanProject;
+
+	exports.build = build;
+	exports.cleanup = cleanup;
+	exports.default = main$1;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 })));

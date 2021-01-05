@@ -1,10 +1,12 @@
 'use strict';
 
+Object.defineProperty(exports, '__esModule', { value: true });
+
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var Handlebars = require('handlebars');
 var Handlebars__default = _interopDefault(Handlebars);
-var jetpack$1 = _interopDefault(require('fs-jetpack'));
+var jetpack$2 = _interopDefault(require('fs-jetpack'));
 
 const jetpack = require('fs-jetpack');
 
@@ -16,6 +18,21 @@ const saveFilepathsAsJSON = async (createdFiles = [], buildName = "latest", root
         }`);
 };
 
+const jetpack$1 = require('fs-jetpack');
+
+const backupFilesAndCleanProject = async (root = '')=>{
+    // Find latest build
+    const index = require(`${root}/.engineer/.builds/latest/index.json`);
+    for(let i = 0; i < index.files.length; i++){
+        const file = index.files[i];
+        try{
+            await jetpack$1.moveAsync(file, `${root}/.engineer/.builds/latest/code/${file}`, { overwrite : true });
+        }catch(err){
+            console.log('failed to move: ', file);
+        }
+    }
+};
+
 // deberia ponerle path al file.
 
 let fetchFile = async (path)=>{
@@ -25,9 +42,9 @@ let fetchFile = async (path)=>{
   
   
       let file = {
-        ...jetpack$1.inspect(path),
+        ...jetpack$2.inspect(path),
         path,
-        contents : jetpack$1.read(path)
+        contents : jetpack$2.read(path)
       };
       files.push(file);
   
@@ -81,7 +98,7 @@ const transmuteFile = async (file, model, dest)=>{
 
   let rendered = transmuteContents(file.contents, model);
 
-  jetpack$1.file(dest, { content : rendered });
+  jetpack$2.file(dest, { content : rendered });
   
   // console.log(dest)
   return dest
@@ -190,4 +207,10 @@ const main = async(path = `${process.cwd()}/engineer.config.js`)=>{
 
 };
 
-module.exports = main;
+const build = main;
+
+const cleanup = backupFilesAndCleanProject;
+
+exports.build = build;
+exports.cleanup = cleanup;
+exports.default = main;

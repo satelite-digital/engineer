@@ -10,7 +10,8 @@ export default [
 		output: {
 			name: 'query',
 			file: pkg.browser,
-			format: 'umd'
+			format: 'umd',
+			exports: 'named'
 		},
 		plugins: [
 			resolve(), // so Rollup can find `ms`
@@ -29,8 +30,8 @@ export default [
 		input: 'src/main.js',
 		external: ['qs'],
 		output: [
-			{ file: pkg.main, format: 'cjs' },
-			{ file: pkg.module, format: 'es' }
+			{ file: pkg.main, format: 'cjs', exports: 'named' },
+			{ file: pkg.module, format: 'es', exports: 'named' }
 		]
 	}
 ];

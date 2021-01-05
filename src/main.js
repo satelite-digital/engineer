@@ -1,5 +1,6 @@
 import { create } from 'handlebars'
-import saveFilepathsAsJSON from './cleanup/saveFilepathsAsJSON.js'
+import saveFilepathsAsJSON from './cleanup/saveFilepathsAsJSON'
+import backupFilesAndCleanProject from './cleanup/backupFilesAndCleanProject'
 import { transmute } from './index'
 
 const boxen = require('boxen')
@@ -46,3 +47,7 @@ const main = async(path = `${process.cwd()}/engineer.config.js`)=>{
 }
 
 export default main
+
+export const build = main
+
+export const cleanup = backupFilesAndCleanProject
