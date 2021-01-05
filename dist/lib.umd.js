@@ -17177,34 +17177,6 @@
         }`);
 	};
 
-	const backupFilesAndCleanProject = async (root = '')=>{
-	    // Find latest build
-	    const index = commonjsRequire();
-	    index.files = [...new Set(index.files)];
-	    for(let i = 0; i < index.files.length; i++){
-	        const file = index.files[i];
-	        try{
-	            await main.moveAsync(file, `${root}/.engineer/.builds/latest/code/${file}`, { overwrite : true });
-
-	            const splitFilePath = file.split('/');
-	            splitFilePath.pop();
-	            const folder = splitFilePath.join('/');
-
-
-	            const folderList = main.list(folder);
-	            
-	            if (!Array.isArray(folderList) || !folderList.length) {
-	                // array does not exist, is not an array, or is empty
-	                // ⇒ remove folder
-	                await main.removeAsync(folder);
-	            }
-
-	        }catch(err){
-	            console.log('failed to move: ', file);
-	        }
-	    }
-	};
-
 	// deberia ponerle path al file.
 
 	let fetchFile = async (path)=>{
@@ -17334,7 +17306,81 @@
 	      
 	  };
 
+	const backupFilesAndCleanProject = async (root = '')=>{
+	    // Find latest build
+	    const index = commonjsRequire();
+	    index.files = [...new Set(index.files)];
+	    for(let i = 0; i < index.files.length; i++){
+	        const file = index.files[i];
+	        try{
+	            await main.moveAsync(file, `${root}/.engineer/.builds/latest/code/${file}`, { overwrite : true });
+
+	            const splitFilePath = file.split('/');
+	            splitFilePath.pop();
+	            const folder = splitFilePath.join('/');
+
+
+	            const folderList = main.list(folder);
+	            
+	            if (!Array.isArray(folderList) || !folderList.length) {
+	                // array does not exist, is not an array, or is empty
+	                // ⇒ remove folder
+	                await main.removeAsync(folder);
+	            }
+
+	        }catch(err){
+	            console.log('failed to move: ', file);
+	        }
+	    }
+	};
+
+	// Util get folder
+	const getFolderPath = (path)=>{
+	  const exploded = path.split('/');
+	  exploded.pop();
+	  return exploded.join('/')
+
+	};
+
+	const getArgs = ()=>{
+	  return process.argv.slice(2)
+	};
+
+	// Transmute main
+	const add = async(path = `${process.cwd()}/engineer.config.js`, template, model)=>{
+	  console.log(' i should scaffold');
+	  // Get config to get adds
+	  const config = commonjsRequire();
+
+	  // find required add
+	  console.log(config.add);
+	  
+
+
+	  for(let i = 0; i < config.add.length ; i ++){
+
+	    const partial = config.add[i];
+	    const root = process.cwd();
+	    const selectedPartial = getArgs()[0] || config.add[0].id;
+
+	    if(partial.id == selectedPartial){ 
+	      // Copy src folder to dest
+	      // jetpack loquesea
+	      try{
+	        const path = `${root}/${partial.dest}`;
+	        const folderPath = getFolderPath(path);
+	        await main.copyAsync(`${root}/${partial.src}`, `${root}/${partial.dest}`);
+	      }catch(err){
+	        console.log('something went wrong');
+	        console.log(err);
+	      }
+	    }
+	  }
+	};
+
 	const transmute$1 = transmute;
+	const backupFilesAndCleanProject$1 = backupFilesAndCleanProject;
+	const add$1 = add;
 
 	// const ora = require('ora')
 
@@ -17380,8 +17426,11 @@
 
 	const build = main$1;
 
-	const cleanup = backupFilesAndCleanProject;
+	const cleanup = backupFilesAndCleanProject$1;
 
+	const add$2 = add$1;
+
+	exports.add = add$2;
 	exports.build = build;
 	exports.cleanup = cleanup;
 	exports.default = main$1;

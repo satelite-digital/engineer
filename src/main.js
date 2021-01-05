@@ -1,7 +1,6 @@
 import { create } from 'handlebars'
 import saveFilepathsAsJSON from './cleanup/saveFilepathsAsJSON'
-import backupFilesAndCleanProject from './cleanup/backupFilesAndCleanProject'
-import { transmute } from './index'
+import { transmute, backupFilesAndCleanProject, add as addScript } from './index'
 
 const boxen = require('boxen')
 // const ora = require('ora')
@@ -51,3 +50,5 @@ export default main
 export const build = main
 
 export const cleanup = backupFilesAndCleanProject
+
+export const add = addScript
