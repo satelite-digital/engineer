@@ -1,3 +1,5 @@
+[This project is deprecated and will be replaced by [Instantcode](https://github.com/erickruano/instantcode)]
+
 # Satelite Engineer
 
 A next-gen Low-code/No-code tool that enables developers to turn their code into code generating platforms for any programming language.
