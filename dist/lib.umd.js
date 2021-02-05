@@ -17197,7 +17197,7 @@
 	  return files[0];
 	};
 
-	let generatePath = (dest, model)=>{
+	let generatePath = (dest, data)=>{
 
 	  var res = dest.match(/\[(.*?)\]/g);
 	  
@@ -17207,7 +17207,7 @@
 	      let key = item.replace('[', '');
 	      key = key.replace(']', '');
 	      
-	      dest = dest.replace(item, model[key]);
+	      dest = dest.replace(item, data[key]);
 	    });  
 	    
 	  }
@@ -17220,12 +17220,12 @@
 	    return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
 	});
 
-	let transmuteContents = (contents, model)=>{
+	let transmuteContents = (contents, data)=>{
 
 
 	        try{
 	            let compiler = lib.compile(contents);
-	            let res = compiler(model);
+	            let res = compiler(data);
 	            return(res);
 	        }catch(err){
 	            // console.log('modelo que falla!!!', model)
@@ -17235,12 +17235,12 @@
 	    
 	};
 
-	const transmuteFile = async (file, model, dest)=>{
+	const transmuteFile = async (file, data, dest)=>{
 
 	  // Get file path
-	  dest = generatePath(dest, model);
+	  dest = generatePath(dest, data);
 
-	  let rendered = transmuteContents(file.contents, model);
+	  let rendered = transmuteContents(file.contents, data);
 
 	  main.file(dest, { content : rendered });
 	  
@@ -17250,40 +17250,40 @@
 	};
 
 	// Transmute main
-	const transmute = async(resource, config)=>{
+	const transmute = async(fileTemplate, config)=>{
 
-	      let validModel = config.model; //  refactor
-	      let scopedModel;
+	      let validData = config.data; //  refactor
+	      let scopedData;
 
 	      let createdFiles = [];
 
-	      if(resource.hasOwnProperty('key')){
-	        scopedModel = validModel[resource.key]; // implementar lodash
+	      if(fileTemplate.hasOwnProperty('key')){
+	        scopedData = validData[fileTemplate.key]; // implementar lodash
 	      }else {
-	        scopedModel = validModel;
+	        scopedData = validData;
 	      }
 
 
 	     
 	          // fetchFiles
-	          const file = await fetchFile(resource.src); // file
+	          const file = await fetchFile(fileTemplate.src); // file
 	            
-	          if(Array.isArray(scopedModel)){
+	          if(Array.isArray(scopedData)){
 	            
-	            // scopedModel.forEach(async (item, idx) =>{
-	              for(let idx = 0; idx < scopedModel.length; idx++){
-	                let item = scopedModel[idx];
+	            // scopedData.forEach(async (item, idx) =>{
+	              for(let idx = 0; idx < scopedData.length; idx++){
+	                let item = scopedData[idx];
 
 	                let createIf = true;
-	                if('if' in resource && typeof resource.if == 'function'){
-	                  createIf = resource.if(item);
+	                if('if' in fileTemplate && typeof fileTemplate.if == 'function'){
+	                  createIf = fileTemplate.if(item);
 	                }
 	              if(createIf){  
-	                const transmutedFilePath = await transmuteFile(file, item, resource.dest);
+	                const transmutedFilePath = await transmuteFile(file, item, fileTemplate.dest);
 	                createdFiles.push(transmutedFilePath);
 	              }
 	              
-	              if (idx === scopedModel.length - 1){ 
+	              if (idx === scopedData.length - 1){ 
 	                // console.log('createdFiles --', createdFiles)
 	                return createdFiles
 	              }
@@ -17292,11 +17292,11 @@
 	              // })
 	          }else {
 	            let createIf = true;
-	              if('if' in resource && typeof resource.if == 'function'){
-	                createIf = resource.if(scopedModel);
+	              if('if' in fileTemplate && typeof fileTemplate.if == 'function'){
+	                createIf = fileTemplate.if(scopedData);
 	              }
 	              if(createIf){  
-	                const transmutedFilePath = await transmuteFile(file, scopedModel, resource.dest);
+	                const transmutedFilePath = await transmuteFile(file, scopedData, fileTemplate.dest);
 	                createdFiles.push(transmutedFilePath);
 	              }
 	            
@@ -17347,7 +17347,7 @@
 	};
 
 	// Transmute main
-	const add = async(path = `${process.cwd()}/engineer.config.js`, template, model)=>{
+	const add = async(path = `${process.cwd()}/engineer.config.js`)=>{
 	  console.log(' i should scaffold');
 	  // Get config to get adds
 	  const config = commonjsRequire();
@@ -17362,6 +17362,7 @@
 	    const partial = config.add[i];
 	    const root = process.cwd();
 	    const selectedPartial = getArgs()[0] || config.add[0].id;
+	    const name = getArgs()[1] || selectedPartial;
 
 	    if(partial.id == selectedPartial){ 
 	      // Copy src folder to dest
@@ -17369,7 +17370,8 @@
 	      try{
 	        const path = `${root}/${partial.dest}`;
 	        const folderPath = getFolderPath(path);
-	        await main.copyAsync(`${root}/${partial.src}`, `${root}/${partial.dest}`);
+	        console.log('creating: ', `${folderPath}/${name}`);
+	        await main.copyAsync(`${root}/${partial.src}`, `${folderPath}/${name}`);
 	      }catch(err){
 	        console.log('something went wrong');
 	        console.log(err);
@@ -17400,19 +17402,19 @@
 	    config = await config;
 	  }
 
-	  // Execute engineer for each resource
-	  // config.resources.forEach(async (resource, i) =>{
+	  // Execute engineer for each fileTemplate
+	  // config.fileTemplates.forEach(async (fileTemplate, i) =>{
 
-	  for(let i = 0; i < config.resources.length; i++){
+	  for(let i = 0; i < config.fileTemplates.length; i++){
 
-	    const resource = config.resources[i];
+	    const fileTemplate = config.fileTemplates[i];
 
-	    const res = await transmute$1(resource, config);
+	    const res = await transmute$1(fileTemplate, config);
 
 	    createdFiles.push(...res);
 	    
 
-	    if(i == (config.resources.length - 1)){
+	    if(i == (config.fileTemplates.length - 1)){
 	      // spinner.stop()
 	      const after = new Date();
 	      console.log(`Build took ${after - before}ms`, createdFiles);

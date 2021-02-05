@@ -1,45 +1,42 @@
 import fetchFile from "./../utils/fetchFile";
 import transmuteFile from "./transmuteFile";
 
-const returner = (value)=>{
-  return value
-}
 
 // Transmute main
-const transmute = async(resource, config)=>{
+const transmute = async(fileTemplate, config)=>{
 
-      let validModel = config.model; //  refactor
-      let scopedModel;
+      let validData = config.data; //  refactor
+      let scopedData;
 
       let createdFiles = [];
 
-      if(resource.hasOwnProperty('key')){
-        scopedModel = validModel[resource.key]; // implementar lodash
+      if(fileTemplate.hasOwnProperty('key')){
+        scopedData = validData[fileTemplate.key]; // implementar lodash
       }else{
-        scopedModel = validModel;
+        scopedData = validData;
       }
 
 
      
           // fetchFiles
-          const file = await fetchFile(resource.src, true); // file
+          const file = await fetchFile(fileTemplate.src, true); // file
             
-          if(Array.isArray(scopedModel)){
+          if(Array.isArray(scopedData)){
             
-            // scopedModel.forEach(async (item, idx) =>{
-              for(let idx = 0; idx < scopedModel.length; idx++){
-                let item = scopedModel[idx]
+            // scopedData.forEach(async (item, idx) =>{
+              for(let idx = 0; idx < scopedData.length; idx++){
+                let item = scopedData[idx]
 
                 let createIf = true
-                if('if' in resource && typeof resource.if == 'function'){
-                  createIf = resource.if(item)
+                if('if' in fileTemplate && typeof fileTemplate.if == 'function'){
+                  createIf = fileTemplate.if(item)
                 }
               if(createIf){  
-                const transmutedFilePath = await transmuteFile(file, item, resource.dest);
+                const transmutedFilePath = await transmuteFile(file, item, fileTemplate.dest);
                 createdFiles.push(transmutedFilePath)
               }
               
-              if (idx === scopedModel.length - 1){ 
+              if (idx === scopedData.length - 1){ 
                 // console.log('createdFiles --', createdFiles)
                 return createdFiles
               }
@@ -48,11 +45,11 @@ const transmute = async(resource, config)=>{
               // })
           }else{
             let createIf = true
-              if('if' in resource && typeof resource.if == 'function'){
-                createIf = resource.if(scopedModel)
+              if('if' in fileTemplate && typeof fileTemplate.if == 'function'){
+                createIf = fileTemplate.if(scopedData)
               }
               if(createIf){  
-                const transmutedFilePath = await transmuteFile(file, scopedModel, resource.dest);
+                const transmutedFilePath = await transmuteFile(file, scopedData, fileTemplate.dest);
                 createdFiles.push(transmutedFilePath)
               }
             

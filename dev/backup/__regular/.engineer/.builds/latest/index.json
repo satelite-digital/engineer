@@ -1,4 +1,0 @@
-{ 
-    "files" : ["./dev/dist/hello.world.js","./dev/dist/A.method.js","./dev/dist/B.method.js","./dev/dist/C.method.js"],
-    "buildAt" : "1/4/2021, 4:37:00 PM"
-}

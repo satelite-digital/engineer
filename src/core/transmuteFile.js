@@ -3,12 +3,12 @@ import generatePath from "./../utils/generatePath.js";
 
 import transmuteContents from "./transmuteContents.js";
 
-const transmuteFile = async (file, model, dest)=>{
+const transmuteFile = async (file, data, dest)=>{
 
   // Get file path
-  dest = generatePath(dest, model);
+  dest = generatePath(dest, data);
 
-  let rendered = transmuteContents(file.contents, model);
+  let rendered = transmuteContents(file.contents, data);
 
   jetpack.file(dest, { content : rendered });
   

@@ -1,11 +1,11 @@
 {
     "app" : {
-        "scope" : "@pentcloud",
-        "id" : "formspace-satelite",
-        "name" : "NodeJS REST API template",
+        "scope" : "@satelite",
+        "id" : "svelte-minimal-template",
+        "name" : "Svelte Minimal Template",
         "host" : "http://localhost:3000"
     },
-    "model" : [    
+    "schema" : [    
         {
             "id": "organization",
             "name": "Organization",

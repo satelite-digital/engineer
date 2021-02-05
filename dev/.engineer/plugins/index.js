@@ -1,6 +1,5 @@
 const plugins = {
-  fetchSateliteApp : require('./fetchSateliteApp.plugin'),
-  prismaClientName : require('./prismaClientName.plugin')
+  fetchSateliteApp : require('./fetchSateliteApp.plugin')
 }
 
 module.exports = plugins

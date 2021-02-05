@@ -13,7 +13,7 @@ const getArgs = ()=>{
 }
 
 // Transmute main
-const add = async(path = `${process.cwd()}/engineer.config.js`, template, model)=>{
+const add = async(path = `${process.cwd()}/engineer.config.js`)=>{
   console.log(' i should scaffold')
   // Get config to get adds
   const config = require(path)
@@ -28,6 +28,7 @@ const add = async(path = `${process.cwd()}/engineer.config.js`, template, model)
     const partial = config.add[i]
     const root = process.cwd()
     const selectedPartial = getArgs()[0] || config.add[0].id
+    const name = getArgs()[1] || selectedPartial
 
     if(partial.id == selectedPartial){ 
       // Copy src folder to dest
@@ -35,7 +36,8 @@ const add = async(path = `${process.cwd()}/engineer.config.js`, template, model)
       try{
         const path = `${root}/${partial.dest}`
         const folderPath = getFolderPath(path)
-        await jetpack.copyAsync(`${root}/${partial.src}`, `${root}/${partial.dest}`)
+        console.log('creating: ', `${folderPath}/${name}`)
+        await jetpack.copyAsync(`${root}/${partial.src}`, `${folderPath}/${name}`)
       }catch(err){
         console.log('something went wrong')
         console.log(err)

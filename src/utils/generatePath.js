@@ -1,4 +1,4 @@
-let generatePath = (dest, model)=>{
+let generatePath = (dest, data)=>{
 
   var res = dest.match(/\[(.*?)\]/g);
   
@@ -8,7 +8,7 @@ let generatePath = (dest, model)=>{
       let key = item.replace('[', '');
       key = key.replace(']', '');
       
-      dest = dest.replace(item, model[key]);
+      dest = dest.replace(item, data[key]);
     })  
     
   }

@@ -5,12 +5,12 @@ Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
     return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
 });
 
-let transmuteContents = (contents, model)=>{
+let transmuteContents = (contents, data)=>{
 
 
         try{
             let compiler = Handlebars.compile(contents);
-            let res = compiler(model);
+            let res = compiler(data);
             return(res);
         }catch(err){
             // console.log('modelo que falla!!!', model)

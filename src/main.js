@@ -21,19 +21,19 @@ const main = async(path = `${process.cwd()}/engineer.config.js`)=>{
     config = await config
   }
 
-  // Execute engineer for each resource
-  // config.resources.forEach(async (resource, i) =>{
+  // Execute engineer for each fileTemplate
+  // config.fileTemplates.forEach(async (fileTemplate, i) =>{
 
-  for(let i = 0; i < config.resources.length; i++){
+  for(let i = 0; i < config.fileTemplates.length; i++){
 
-    const resource = config.resources[i]
+    const fileTemplate = config.fileTemplates[i]
 
-    const res = await transmute(resource, config)
+    const res = await transmute(fileTemplate, config)
 
     createdFiles.push(...res)
     
 
-    if(i == (config.resources.length - 1)){
+    if(i == (config.fileTemplates.length - 1)){
       // spinner.stop()
       const after = new Date()
       console.log(`Build took ${after - before}ms`, createdFiles)

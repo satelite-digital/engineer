@@ -1,22 +1,19 @@
-const resources = require('./.engineer/index')
-const { utilsResources, serverResources, seederResources } = resources
 
 const config = {
   "options" : {
+       
   },
   "add" : [
-    { id : 'module', src : './dev/.engineer/.add/module', dest : './srcs/module', options : { allowModel : false } },
+    { id : 'module', src : './dev/.engineer/.add/module', dest : './srcs/module', options : { allowModel : false, create : { src : 'path/to/template' } } },
     { id : 'service', src : './dev/.engineer/.add/service', dest : './srcx/service', options : { allowModel : true } }
   ],
-  "model" : require("./.engineer/schema.json"),
-  "resources" : [
-    // Utils
-    ...utilsResources(),
-    // Server
-    ...serverResources(),
-    // Seeder
-    ...seederResources()
-    // Add your custom files after this comment
+  "data" : require("./.engineer/schema.json"),
+  "fileTemplates" : [
+    {
+      "src" : "./.engineer/files/code.js",
+      "dest" : "./src/[id]/index.js",
+      "key" : "schema"
+    } 
   ]
 }
 
