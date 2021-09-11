@@ -1,0 +1,19 @@
+{
+  "name": "@satelite/engineer",
+  "version": "1.0.0",
+  "description": "Data-driven code generation tool",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satelite-digital/engineer.git"
+  },
+  "author": "Erick Ruano",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/satelite-digital/engineer/issues"
+  },
+  "homepage": "https://github.com/satelite-digital/engineer#readme"
+}
