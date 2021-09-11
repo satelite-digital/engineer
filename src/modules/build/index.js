@@ -1,1 +1,3 @@
-export default () => console.log('Building...');
+const build = () => true;
+
+export default build;

@@ -9,4 +9,5 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {},
+  ignorePatterns: ['src/**/*.test*'],
 };
