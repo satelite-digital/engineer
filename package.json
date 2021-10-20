@@ -6,7 +6,7 @@
   "module": "dist/engineer.esm.js",
   "scripts": {
     "test": "jest",
-    "lint": "eslint --fix && prettier --write",
+    "lint": "eslint src --fix && prettier src --write",
     "build": "rollup -c",
     "prepare": "husky install"
   },
@@ -20,9 +20,16 @@
     "url": "https://github.com/satelite-digital/engineer/issues"
   },
   "homepage": "https://github.com/satelite-digital/engineer#readme",
+  "dependencies": {
+    "axios": "^0.21.4",
+    "decompress": "^4.2.1",
+    "fs-extra": "^10.0.0",
+    "handlebars": "^4.7.7"
+  },
   "devDependencies": {
     "@babel/core": "^7.15.5",
     "@babel/preset-env": "^7.15.6",
+    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.4",
     "babel-jest": "^27.1.1",
     "eslint": "^7.32.0",
