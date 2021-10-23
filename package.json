@@ -1,6 +1,6 @@
 {
   "name": "@satelite/engineer",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "description": "Data-driven code generation tool",
   "main": "dist/engineer.cjs.js",
   "module": "dist/engineer.esm.js",
