@@ -6,11 +6,11 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
+
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-
 
 <!-- PROJECT LOGO -->
 <br />
@@ -42,7 +42,7 @@
 
 ### What is it?
 
-Think Gatsby but language agnostic, much simpler since its only the code generation engine, and while it can also be used as a SSG (Static Site Generator) this is not its main focus or target use.  It is highly extendible and programmable, it can be integrated into modern CI/CD toolchains and can be connected to any data source, or many, via plugins.  
+Think Gatsby but language agnostic, much simpler since its only the code generation engine, and while it can also be used as a SSG (Static Site Generator) this is not its main focus or target use. It is highly extendible and programmable, it can be integrated into modern CI/CD toolchains and can be connected to any data source, or many, via plugins.
 
 In short, it is a tool that will take template files that you write, and a data structure you provide, to generate new files using the provided data.
 
@@ -108,7 +108,7 @@ And thats it! you should now see a `src` folder containing an index.js file and 
 
 Continue exploring this guide so you'll soon know why this is so much cooler than writing your own static code.
 
-First, let me explain **what just happened.**
+First, let me explain\*what just happened.\*\*
 
 ### Understanding the configuration file
 
@@ -122,6 +122,7 @@ Open `engineer.config.js` and you'll notice that the code imports the example `d
     "data" : require("././satelite/engineer/data.json")
 }
 ```
+
 Which right now only contains the following:
 
 ```
@@ -132,7 +133,7 @@ Which right now only contains the following:
 }
 ```
 
-In short, the **configuration file** should export a configuration `Object` or a `Promise` that will return a configuration `Object`, allowing you to fetch data or configurations asynchronously.
+In short, the\*configuration file\*\* should export a configuration `Object` or a `Promise` that will return a configuration `Object`, allowing you to fetch data or configurations asynchronously.
 
 While there aren't (almost) any rules about what goes into a configuration object, your data needs to be put into a `data` key on your configuration object.
 
@@ -140,7 +141,7 @@ Please note that this could be anything you can get into a NodeJS application (b
 
 #### Template files
 
-Remember I just said there weren't almost any rules? Well, here is the only other exception.  To add template files that are going to be processed by Satelite Engineer you need to specify their source and destination paths in a `templates` key on your configuration object.
+Remember I just said there weren't almost any rules? Well, here is the only other exception. To add template files that are going to be processed by Satelite Engineer you need to specify their source and destination paths in a `templates` key on your configuration object.
 
 ```
 // ./engineer.config.js
@@ -156,13 +157,68 @@ Remember I just said there weren't almost any rules? Well, here is the only othe
 }
 ```
 
-A file template is any file which implements a templating engine.  By default, Satelite Engineer will use [Handlebars.js](https://handlebarsjs.com/) to compile your templates, although you can setup any other template engine if you prefer.
+A file template is any file which implements a templating engine. By default, Satelite Engineer will use [Handlebars.js](https://handlebarsjs.com/) to compile your templates, although you can setup any other template engine if you prefer.
 
 ```
 // ./.satelite/engineer/files/code.js
 
 console.log("{{message}}"); // 😉 this is how we got our "Hello, World!".
 
+```
+
+#### Options
+
+Engineer also allows for an options object, which currently only expects an optional `engine` key in which you can provide your own Handlebars instance to use instead of the one that comes built-in. This is intended to allow the use of custom handlebars helpers and could be used as follows:
+
+```
+const Handlebars = require('handlebars');
+
+// Extracted from https://github.com/helpers/handlebars-helpers/blob/master/lib/inflection.js#L58
+const inflect = function(count, singular, plural, includeCount) {
+  var word = (count > 1 || count === 0) ? plural : singular;
+  if (includeCount === true) {
+    return String(count) + ' ' + word;
+  } else {
+    return word;
+  }
+};
+
+Handlebars.registerHelper('inflect', inflect);
+
+module.exports = () => {
+  return {
+    data: {
+      number: 4,
+    },
+    templates: [
+      {
+        src: '.satelite/engineer/files/index.js',
+        dest: 'src/index.js',
+      },
+    ],
+    options: {
+      engine: Handlebars,
+    },
+  }
+};
+
+```
+
+And then in your template files you could:
+
+```handlebars
+<!-- Also taken from https://github.com/helpers/handlebars-helpers/blob/master/lib/inflection.js#L58  -->
+
+{{inflect 0 'string' 'strings'}}
+<!-- "strings" -->
+{{inflect 1 'string' 'strings'}}
+<!-- "string" -->
+{{inflect 1 'string' 'strings' true}}
+<!-- "1 string" -->
+{{inflect 2 'string' 'strings'}}
+<!-- "strings" -->
+{{inflect 2 'string' 'strings' true}}
+<!-- "2 strings" -->
 ```
 
 ### Now let's use it to make something cooler 🥶
@@ -221,7 +277,7 @@ This time you are going to provide an array as data input to one of our files to
 
 ```
 
-Each file will get the corresponding key from your data object as input for the template directives. 
+Each file will get the corresponding key from your data object as input for the template directives.
 
 Since all the generated files will have the exact same name and route each one will overwrite the previous, which is not what we intend.
 
@@ -248,7 +304,7 @@ This will output a `src/user/index.js` and a `src/todo/index.js`
 
 > What if I need to transform the data before the files get it?
 
-Satelite Engineer supports functional extension through the use and writing of plugins.  Plugins are just any function that will get the current configuration `Object`, do any work with it and return it back.
+Satelite Engineer supports functional extension through the use and writing of plugins. Plugins are just any function that will get the current configuration `Object`, do any work with it and return it back.
 
 ```
 // ./.satelite/engineer/plugins/yourAwesomePlugin.js
@@ -284,6 +340,7 @@ return config;
 ```
 
 And now you can do the following:
+
 ```
 // ./.satelite/engineer/files/code.js
 
@@ -291,6 +348,7 @@ console.log('{{displayName}}')
 ```
 
 Or even something like
+
 ```
 // ./engineer.config.js
 
@@ -300,16 +358,16 @@ Or even something like
 ```
 
 <!-- ROADMAP -->
+
 ## Roadmap
 
 See the [open issues](https://github.com/satelite-digital/engineer/issues) for a list of proposed features (and known issues).
 
-
-
 <!-- CONTRIBUTING -->
+
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are\*greatly appreciated\*\*.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -317,17 +375,15 @@ Contributions are what make the open source community such an amazing place to b
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-
-
 <!-- CONTACT -->
+
 ## Contact
 
-Erick Ruano - [@_erickruano](https://twitter.com/_erickruano_) - erick@satelite.digital
-
-
+Erick Ruano - [@\_erickruano](https://twitter.com/_erickruano_) - erick@satelite.digital
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
 [contributors-shield]: https://img.shields.io/github/contributors/satelite-digital/engineer.svg?style=for-the-badge
 [contributors-url]: https://github.com/satelite-digital/engineer/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/satelite-digital/engineer.svg?style=for-the-badge
