@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
+import objectGetDeep from '../../utils/objectGetDeep';
 
 const Handlebars = require('handlebars');
 
@@ -41,7 +42,7 @@ const buildFile = async (template, scope, options) => {
 };
 
 const processTemplate = async (template, data, options) => {
-  const scope = template.key ? data[template.key] : data;
+  const scope = template.key ? objectGetDeep(data, template.key) : data;
   if (Array.isArray(scope)) {
     scope.forEach((subscope) => buildFile(template, subscope));
   } else {
