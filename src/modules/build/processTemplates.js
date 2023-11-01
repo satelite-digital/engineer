@@ -44,7 +44,7 @@ const buildFile = async (template, scope, options) => {
 const processTemplate = async (template, data, options) => {
   const scope = template.key ? objectGetDeep(data, template.key) : data;
   if (Array.isArray(scope)) {
-    scope.forEach((subscope) => buildFile(template, subscope));
+    scope.forEach((subscope) => buildFile(template, subscope, options));
   } else {
     buildFile(template, scope, options);
   }
